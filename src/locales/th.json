@@ -1,0 +1,16 @@
+{
+    "common": {
+        "hello": "Hello",
+        "dashboard": "Dashboard"
+    },
+    "title": {
+        "to-do-list": "To Do List",
+        "log": "Log",
+        "viewers": "Viewers",
+        "camera": "Camera",
+        "segments": "Segments",
+        "text-to-speech": "Text to Speech",
+        "speech-to-text": "Speech to Text",
+        "json": "Json"
+    }
+}

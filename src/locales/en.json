@@ -1,0 +1,144 @@
+{
+  "common": {
+    "hello": "Hello",
+    "dashboard": "Dashboard",
+    "new": "New",
+    "edit-detail": "Edit Detail",
+    "back": "Back",
+    "name": "Name",
+    "last-name": "Last Name",
+    "id-card": "ID Card",
+    "house-registration": "House Registration",
+    "cv-form": "CV Form",
+    "edit": "Edit",
+    "complete": "Complete",
+    "address": "Address",
+    "upload": "Upload",
+    "cancel": "Cancel",
+    "document-upload": "Document Upload",
+    "scan": "Scan",
+    "ai-progress": "AI Progress",
+    "submit": "Submit",
+    "select-file": "Select File",
+    "approve": "Approve",
+    "interview-profile": "Interview Profile",
+    "total-score": "Total Score",
+    "questions": "Questions",
+    "answers": "Answers",
+    "score": "Score",
+    "interviewer-name": "Interviewer Name",
+    "interview-score": "Interview Score",
+    "accept": "Accept",
+    "reject": "Reject",
+    "no-file-selected": "No File Selected",
+    "close": "Close",
+    "preview": "Preview",
+    "add": "Add",
+    "save": "Save",
+    "details": "Details",
+    "create": "Create",
+    "update": "Update",
+    "job": "Job",
+    "result": "Result",
+    "add-new": "Add New",
+    "basic-question-yes": "Yes",
+    "basic-question-no": "No",
+    "basic-score-pass": "Pass",
+    "basic-score-fail": "Fail"
+  },
+  "title": {
+    "dashboard": "Dashboard",
+    "supplier-management": "Supplier Management",
+    "suppliers": "Suppliers",
+    "transcations": "Transcations",
+    "inventory-management": "Inventory Management",
+    "employee-management": "Employee Management",
+    "table-management": "Table Management",
+    "category-management": "Category Management",
+    "menu-management": "Menu Management",
+    "menuitem-addon-management": "Item Add on"
+    
+  },
+  "tabs": {
+    "check-documents": "Check Documents",
+    "search-for-candidate": "Search for Candidate",
+    "create-interview-round": "Create Interview Round"
+  },
+  "fields": {
+    "common": {
+      "number": "Number"
+    },
+    "actions": "Actions",
+    "employee-management": {
+      "number": "No",
+      "fullname": "Fullname",
+      "email": "Email",
+      "phone": "Phone",
+      "profile": "Profile"
+    },
+    "table-management": {
+      "number": "No",
+      "tableNo": "Table Number",
+      "capacity": "Capacity"
+    },
+    "sd": {
+
+    }
+  },
+  "placeholder": {
+    "interviewer-name": "Interviewer Name",
+    "interview-score": "Interview Score"
+    
+  },
+  "pool": {
+    "add-to-event": "Add to Event",
+    "approve-for-interview": "Approve for Interview",
+    "create-qr": "Create QR",
+    "watch-videos": "Watch Videos",
+    "candidate-details": "Candidate Details",
+    "interview-analysis": "Interview Analysis"
+  },
+  "candidate": {
+    "profile-checklist": "Profile CheckList",
+    "cannot": "Cannot",
+    "can": "can",
+    "ever": "Ever",
+    "never": "Never"
+  },
+  "job-position": {
+    "add-basic-question": "Add Basic Question",
+    "add-master-question": "Add Master Question"
+  },
+  "success-title": {
+    "login": "You logged in with the following email:",
+    "add": "Addition successful",
+    "update": "Update successful",
+    "scan": "Scan Successful!"
+  },
+  "success-msg": {
+    "login": "Successful login",
+    "add": "You have successfully added.",
+    "update": "You have successfully updated.",
+    "scan": "You have successfully scanned the document."
+  },
+  "error-title": {
+    "login": "Login Fail!",
+    "unknown-error": "Something went wrong!",
+    "scan": "Scan Fail!",
+    "add": "Add Failed!",
+    "update": "Update Failed!"
+  },
+  "error-msg": {
+    "login": "An error occurred during login. Please try again.",
+    "fail-query": "Failed to fetch data!",
+    "required": "Required",
+    "add": "Something went wrong.",
+    "update": "Something went wrong."
+  },
+  "dialog-title": {
+    "are-you-sure": "Are you sure?"
+  },
+  "dialog-desc": {
+    "add-person-to-onboard": "You add [[Number]] person. Accept to 'Onboard'."
+  }
+}
