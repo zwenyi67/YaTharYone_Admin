@@ -65,7 +65,7 @@ export const columns: ColumnDef<GetEmployeesType>[] = [
     cell: ({ row }) => {
       return (
         <div>
-          {formatDate(row.original.createdAt.toString(), "dd/MM/yyyy HH:mm")}
+          {formatDate(row.original.created_at.toString(), "dd/MM/yyyy HH:mm")}
         </div>
       );
     },
