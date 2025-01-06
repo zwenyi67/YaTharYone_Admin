@@ -50,14 +50,15 @@
     "dashboard": "Dashboard",
     "supplier-management": "Supplier Management",
     "suppliers": "Suppliers",
+    "purchases": "Purchase Histories",
     "transcations": "Transcations",
+    "purchasing-transactions": "Purchasing Transactions",
     "inventory-management": "Inventory Management",
     "employee-management": "Employee Management",
     "table-management": "Table Management",
     "category-management": "Category Management",
     "menu-management": "Menu Management",
     "menuitem-addon-management": "Item Add on"
-    
   },
   "tabs": {
     "check-documents": "Check Documents",
@@ -76,19 +77,25 @@
       "phone": "Phone",
       "profile": "Profile"
     },
+    "supplier-management": {
+      "suppliers" : {
+        "number": "No",
+        "name": "Supplier Name",
+        "email": "Email",
+        "phone": "Phone",
+        "profile": "Profile"
+      }
+    },
     "table-management": {
       "number": "No",
       "tableNo": "Table Number",
       "capacity": "Capacity"
     },
-    "sd": {
-
-    }
+    "sd": {}
   },
   "placeholder": {
     "interviewer-name": "Interviewer Name",
     "interview-score": "Interview Score"
-    
   },
   "pool": {
     "add-to-event": "Add to Event",

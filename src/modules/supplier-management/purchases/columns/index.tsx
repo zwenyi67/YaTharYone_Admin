@@ -2,14 +2,14 @@ import TableHeaderCell from "@/components/table/TableHeaderCell";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import ManageColumn from "./ManageColumn";
-import { GetSuppliersType } from "@/api/supplier/types";
+import { GetEmployeesType } from "@/api/employee/types";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-const baseIndex = 'fields.supplier-management.suppliers'
+const baseIndex = 'fields.employee-management'
 
-export const columns: ColumnDef<GetSuppliersType>[] = [
+export const columns: ColumnDef<GetEmployeesType>[] = [
   {
     accessorKey: "number",
     header: () => <TableHeaderCell>{`${baseIndex}.number`}</TableHeaderCell>,
@@ -38,10 +38,10 @@ export const columns: ColumnDef<GetSuppliersType>[] = [
     filterFn: "includesString",
   },
   {
-    accessorKey: "name",
-    header: () => <TableHeaderCell>{`${baseIndex}.name`}</TableHeaderCell>,
+    accessorKey: "fullname",
+    header: () => <TableHeaderCell>{`${baseIndex}.fullname`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.name}</div>;
+      return <div>{row.original.fullname}</div>;
     },
     filterFn: "includesString",
   },

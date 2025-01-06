@@ -27,8 +27,8 @@ export const sidebarData = [
         icon: Store,
       },
       {
-        routeNames: ["/supplier-management/transcations"],
-        name: "title.transcations",
+        routeNames: ["/supplier-management/purchasehistories"],
+        name: "title.purchases",
         icon: ArrowRightLeft,
       },
     ],

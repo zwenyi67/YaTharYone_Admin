@@ -28,6 +28,7 @@ import MenuView from "@/modules/menu/MenuView";
 import MenuFormView from "@/modules/menu/MenuFormView";
 import SupplierView from "@/modules/supplier-management/supplier/SupplierView";
 import SupplierFormView from "@/modules/supplier-management/supplier/SupplierFormView";
+import PurchasesView from "@/modules/supplier-management/purchases/PurchasesView";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -52,8 +53,8 @@ const router = createBrowserRouter([
         element: <SupplierFormView />,
       },
       {
-        path: "supplier-management/transcations",
-        element: <SupplierView />,
+        path: "supplier-management/purchasehistories",
+        element: <PurchasesView />,
       },
       
       {

@@ -61,7 +61,7 @@ const formSchema = z.object({
   }),
 });
 
-export default function SupplierFormView() {
+export default function PurchasesFormView() {
 
   const navigate = useNavigate();
 
