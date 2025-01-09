@@ -4,7 +4,7 @@ import { ChevronRightIcon } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 
-const DesktopSidebar = () => {
+const MobileSidebar = () => {
   const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
 
   const toggleSubMenu = (itemName: string) => {
@@ -62,10 +62,7 @@ const DesktopSidebar = () => {
 
 
   return (
-    <aside className="lg:flex flex-col hidden min-h-svh bg-gray-100 h-full transition-all duration-300 lg:min-w-[280px] shadow-lg">
-      <div className="flex flex-col items-center justify-center h-20">
-        <div className="">YaTharYone</div>
-      </div>
+    <div>
       <div className="px-3">
         {sidebarData.map((item) => (
           <div
@@ -121,8 +118,8 @@ const DesktopSidebar = () => {
           </div>
         ))}
       </div>
-    </aside>
+    </div>
   );
 };
 
-export default DesktopSidebar;
+export default MobileSidebar;

@@ -2,7 +2,6 @@ import api from "@/api"
 import TableUI from "@/components/table/TableUI"
 import { t } from "i18next"
 import { columns } from "./columns"
-import { Link } from "react-router-dom"
 
 const SupplierView = () => {
 
@@ -10,9 +9,10 @@ const SupplierView = () => {
 
 	return (
 		<section className="m-4">
+			<div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
+				{t("title.supplier-management")}
+			</div>
 			<div className="p-6 bg-white rounded-lg">
-			<Link to={"/supplier-management/suppliers/create"} className="bg-secondary rounded-sm p-2 text-white mb-5">Add New Supplier</Link>
-
 				<TableUI
 					data={data}
 					columns={columns}
@@ -21,6 +21,7 @@ const SupplierView = () => {
 					columnVisibility={{ created_at: false }}
 					filterColumns={["name"]}
 					sortColumn="created_at"
+					newCreate="/supplier-management/suppliers/create"
 				>
 				</TableUI>
 

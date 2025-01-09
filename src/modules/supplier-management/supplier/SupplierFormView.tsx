@@ -1,4 +1,3 @@
-import { AddEmployeePayloadType, UpdateEmployeePayloadType } from '@/api/employee/types';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,57 +7,46 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { CircleChevronLeft } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
-import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
+import { AddSupplierPayloadType, UpdateSupplierPayloadType } from '@/api/supplier/types';
+import { t } from 'i18next';
 
 
 const formSchema = z.object({
-  employee_id: z.string().nonempty({
-    message: "Employee Id is required.",
-  }),
-  fullname: z.string().min(2, {
-    message: "Full name must be at least 2 characters.",
+  name: z.string().min(2, {
+    message: "Supplier name must be at least 2 characters.",
   }),
   profile: z
-    .instanceof(File, {
-      message: "Profile photo is required and must be an image file.",
-    })
-    .refine(
-      (file) =>
-        ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
-      {
-        message: "Only PNG, JPG, or JPEG files are allowed.",
-      }
-    ), // Validate as an instance of File
+  .union([
+    z.string().optional(),
+    z
+      .instanceof(File)
+      .refine(
+        (file) =>
+          ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
+        {
+          message: "Only PNG, JPG, or JPEG files are allowed.",
+        }
+      ),
+  ])
+  .optional(),
+    contact_person: z.string().min(3, {
+      message: "Contact Person must be at least 3 characters.",
+    }),
+    business_type: z.string().min(3, {
+      message: "Business Type must be at least 3 characters.",
+    }),
   phone: z.string().min(10, {
     message: "Phone number must be at least 10 digits.",
   }),
   email: z.string().email({
     message: "Must be a valid email address.",
   }),
-  gender: z.string().nonempty({
-    message: "Gender must be Male, Female, or Other.",
-  }),
-  birth_date: z.date({
-    required_error: "Birth date is required.",
-  }),
   address: z.string().min(2, {
     message: "Address must be at least 2 characters.",
   }),
-  date_hired: z.date({
-    required_error: "Hired date is required.",
-  }),
-  role_id: z.number({
-    required_error: "Role ID is required.",
-  }),
   createby: z.number().optional(), // Assuming this is optional for the form
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
 });
 
 export default function SupplierFormView() {
@@ -71,55 +59,44 @@ export default function SupplierFormView() {
 
   const passedData = location.state?.data;
 
-  const emp: AddEmployeePayloadType = id
+  const sup: AddSupplierPayloadType = id
     ? { ...passedData }
     : {
-      employee_id: "",
-      fullname: "",
+      name: "",
       profile: undefined,
+      contact_person: "",
       phone: "",
       email: "",
-      gender: "male",
-      birth_date: null,
+      business_type: "",
       address: "",
-      date_hired: null,
-      role_id: 1,
       createby: 1,
-      username: "",
-      password: "",
     };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      employee_id: emp?.employee_id || "",
-      fullname: emp?.fullname || "",
-      profile: emp?.profile,
-      phone: emp?.phone || "",
-      email: emp?.email || "",
-      gender: emp?.gender || "",
-      birth_date: emp?.birth_date ? new Date(emp.birth_date) : undefined,
-      address: emp?.address || "",
-      date_hired: emp?.date_hired ? new Date(emp.date_hired) : undefined,
-      role_id: emp?.role_id || 1,
-      createby: emp?.createby || 1,
-      username: emp?.username || "",
-      password: emp?.password || "",
+      name: sup?.name || "",
+      profile: sup?.profile,
+      contact_person: sup?.contact_person,
+      phone: sup?.phone || "",
+      email: sup?.email || "",
+      business_type: sup?.business_type || "",
+      address: sup?.address || "",
+      createby: sup?.createby || 1,
     },
   });
 
-  const { mutate: addEmployee } =
-    api.employee.addEmployee.useMutation({
+  const { mutate: addSupplier } =
+    api.supplier.addSupplier.useMutation({
       onSuccess: () => {
         toast({
-          title: "New Employee added successfully",
+          title: "New Supplier added successfully",
           variant: "success",
         });
-        navigate("/employees");
+        navigate("/supplier-management/suppliers");
       },
       onError: (error) => {
-        console.error("Error adding Employee process: ", error);
-        form.setError("fullname", { type: "custom", message: error.message });
+        form.setError("name", { type: "custom", message: error.message });
         toast({
           title: error.message,
           variant: "destructive",
@@ -127,18 +104,17 @@ export default function SupplierFormView() {
       },
     });
 
-  const { mutate: updateEmployee } =
-    api.employee.updateEmployee.useMutation({
+  const { mutate: updateSupplier } =
+    api.supplier.updateSupplier.useMutation({
       onSuccess: () => {
         toast({
-          title: "Employee updated successfully",
+          title: "Supplier updated successfully",
           variant: "success",
         });
-        navigate("/employees");
+        navigate("/supplier-management/suppliers");
       },
       onError: (error) => {
-        console.error("Error updating Employee process: ", error);
-        form.setError("fullname", { type: "custom", message: error.message });
+        form.setError("name", { type: "custom", message: error.message });
         toast({
           title: error.message,
           variant: "destructive",
@@ -147,63 +123,55 @@ export default function SupplierFormView() {
     });
 
 
-  const onSubmit = async (emp: z.infer<typeof formSchema>) => {
+  const onSubmit = async (sup: z.infer<typeof formSchema>) => {
     try {
       // Format dates and create FormData
       const formData = new FormData();
-      formData.append("employee_id", emp.employee_id);
-      formData.append("fullname", emp.fullname);
+      formData.append("name", sup.name);
 
       // Handle profile based on whether it's a file or an existing URL
       const profile = form.getValues("profile");
       if (profile instanceof File) {
         formData.append("profile", profile); // Append the new file
-      } else if (id && emp.profile) {
-        formData.append("profile", emp.profile); // Append the existing profile URL
+      } else if (id && sup.profile) {
+        formData.append("profile", sup.profile); // Append the existing profile URL
       }
 
-      formData.append("phone", emp.phone);
-      formData.append("email", emp.email);
-      formData.append("gender", emp.gender);
-      formData.append("birth_date", format(emp.birth_date, "yyyy-MM-dd"));
-      formData.append("address", emp.address);
-      formData.append("date_hired", format(emp.date_hired, "yyyy-MM-dd"));
-      formData.append("role_id", emp.role_id.toString());
-      formData.append("username", emp.username);
-      formData.append("password", emp.password);
+      formData.append("contact_person", sup.contact_person);
+      formData.append("phone", sup.phone);
+      formData.append("email", sup.email);
+      formData.append("business_type", sup.business_type);
+      formData.append("address", sup.address);
 
       if (id) {
         // For edit form
-        formData.append("updateby", (emp.createby || 1).toString());
+        formData.append("updateby", (sup.createby || 1).toString());
         formData.append("id", id);
 
         // Call update API
-        await updateEmployee(formData as unknown as UpdateEmployeePayloadType);
+        await updateSupplier(formData as unknown as UpdateSupplierPayloadType);
       } else {
         // For add form
-        formData.append("createby", (emp.createby || 1).toString());
+        formData.append("createby", (sup.createby || 1).toString());
 
         // Call add API
-        await addEmployee(formData as unknown as AddEmployeePayloadType);
+        await addSupplier(formData as unknown as AddSupplierPayloadType);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
 
-
-
-
   const [preview, setPreview] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id && emp.profile) {
-      const fileUrl = "http://127.0.0.1:8000" + emp.profile;
+    if (id && sup.profile) {
+      const fileUrl = "http://127.0.0.1:8000" + sup.profile;
       setPreview(fileUrl); // Set the preview to the existing profile URL
       //form.setValue("profile", null); // Do not set the profile as a File yet
     }
-  }, [id, emp.profile]);
+  }, [id, sup.profile]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -227,6 +195,9 @@ export default function SupplierFormView() {
 
   return (
     <section className="m-4">
+      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
+            {t("title.supplier-management")}
+            </div>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
@@ -265,7 +236,7 @@ export default function SupplierFormView() {
               {/* Full Name */}
               <FormField
                 control={form.control}
-                name="fullname"
+                name="name"
                 render={({ field }) => (
                   <FormItem >
                     <FormLabel>Supplier Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
@@ -276,9 +247,10 @@ export default function SupplierFormView() {
                   </FormItem>
                 )}
               />
+              {/* Contact Person */}
               <FormField
                 control={form.control}
-                name="fullname"
+                name="contact_person"
                 render={({ field }) => (
                   <FormItem >
                     <FormLabel>Contact Person <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
@@ -317,6 +289,20 @@ export default function SupplierFormView() {
                     </FormItem>
                   )}
                 />
+                {/* Business Type */}
+              <FormField
+                control={form.control}
+                name="business_type"
+                render={({ field }) => (
+                  <FormItem >
+                    <FormLabel>Business Type <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Business Type" {...field} />
+                    </FormControl>
+                    <FormMessage/>
+                  </FormItem>
+                )}
+              />
               {/* Address */}
                 <FormField
                   control={form.control}
@@ -333,8 +319,8 @@ export default function SupplierFormView() {
                 />
             </div>
             <div>
-              <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-5">
-                Submit
+              <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-7">
+              {id ? "Update" : "Save"}
               </button>
             </div>
           </form>

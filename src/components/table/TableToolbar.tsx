@@ -10,6 +10,8 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Input } from "../ui/input";
 import { SetStateAction, useEffect } from "react";
 import { ColumnFiltersState } from "@tanstack/react-table";
+import { ArrowUpDown, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const FILTER_OPTIONS = [
   { label: "Oldest", value: "Oldest" },
@@ -18,33 +20,33 @@ const FILTER_OPTIONS = [
 
 type TableToolbarProps = {
   header?: string;
+  newCreate?: string;
   headerDescription?: string;
   search: boolean;
   sort: boolean;
   setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
-  globalFilter: string | number; 
+  globalFilter: string | number;
   selectedOpt: "Newest" | "Oldest";
   filterColumns: string[],
   setColumnFilters: React.Dispatch<SetStateAction<ColumnFiltersState>>
   classNames: string;
   sortSelectNewLine?: boolean;
   setSelectedOpt: (value: "Oldest" | "Newest") => void;
-  
+
   selectOptions?: { label: string; value: string }[];
   children: React.ReactNode;
 };
 
 const TableToolbar = ({
   search,
+  newCreate,
   sort,
-  header,
-  headerDescription,
   selectedOpt,
   setSelectedOpt,
-  setGlobalFilter, 
+  setGlobalFilter,
   filterColumns,
   setColumnFilters,
-  globalFilter, 
+  globalFilter,
   sortSelectNewLine = false,
   selectOptions = FILTER_OPTIONS,
   classNames = "",
@@ -77,24 +79,21 @@ const TableToolbar = ({
     <div>
       <div
         className={cn(
-          "flex pb-2",
+          "flex pb-2 lg:flex-row md:flex-row flex-col gap-2 mb-4",
           sortSelectNewLine ? "2xl:flex-nowrap flex-wrap mt-2 xl:mt-0" : ""
         )}
       >
-        <div className="mb-4">
-          <h1 className="text-nowrap mb-2 text-xl font-bold">{header ?? ""}</h1>
-          {headerDescription ? (
-            <p className="text-sm text-nowrap text-gray-400">
-              {headerDescription}
-            </p>
-          ) : (
-            <></>
-          )}
+        <div className="">
+            <div>
+            <Link to={newCreate as string} className="flex bg-secondary rounded-sm text-white px-4 py-2">
+            <span>Add</span>
+            <div><Plus/></div>
+            </Link>
+            </div>
         </div>
-
         <div
           className={cn(
-            !classNames ? "flex justify-end w-full gap-2" : classNames
+            !classNames ? "flex lg:flex-row md:flex-row flex-col lg:justify-end md:justify-end justify-center w-full gap-2" : classNames
           )}
         >
           {children}
@@ -104,7 +103,7 @@ const TableToolbar = ({
                 type="text"
                 placeholder="Search"
                 className="indent-3 w-fit bg-gray-100"
-                value={globalFilter} 
+                value={globalFilter}
                 onChange={handleChange}
               />
               <MagnifyingGlassIcon className="top-1/2 bottom-1/2 left-2 absolute -translate-y-1/2" />
@@ -118,8 +117,10 @@ const TableToolbar = ({
               <SelectContent>
                 {selectOptions.map((opt, index) => (
                   <SelectItem value={opt.value} key={index}>
-                    Sort By:
-                    <span className="font-bold"> {opt.label}</span>
+                    <div className="flex">
+                      <ArrowUpDown className="w-4 h-4 pt-1 me-2" />
+                      <span className="font-bold"> {opt.label}</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -27,11 +27,24 @@ export const columns: ColumnDef<GetSuppliersType>[] = [
       const profileUrl = `http://127.0.0.1:8000${row.original.profile}`;
       return (
         <div>
-          <img
-            src={profileUrl} 
-            alt="profile"
-            style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-          />
+          {row.original.profile === null ? (
+            <div className="flex">
+              <div className="flex justify-center items-center rounded-full bg-secondary w-[55px] h-[55px]">
+                <div className="font-bold text-xl text-white">
+                  {row.original.name.charAt(0)}
+                </div>
+              </div>
+            </div>) :
+            (
+              <div className="d-flex ">
+              <img
+                src={profileUrl}
+                alt="profile"
+                className="w-[55px] h-[55px] border-2 border-blue-200 bg-accent rounded-full"
+              />
+              </div>
+            )
+          }
         </div>
       );
     },

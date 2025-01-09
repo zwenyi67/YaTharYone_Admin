@@ -4,11 +4,13 @@ import DesktopSidebar from "@/components/sidebar/DesktopSidebar";
 import ProfileBox from "./common/ProfileBox";
 import { useState } from "react";
 import { Menu as MenuIcon, X as XIcon } from "lucide-react";
+import { Cross1Icon } from "@radix-ui/react-icons";
+import MobileSidebar from "@/components/sidebar/MobileSidebar";
 
 const DefaultLayout = () => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
@@ -19,18 +21,36 @@ const DefaultLayout = () => {
   return (
     <div className="h-screen flex overflow-hidden">
       {/* Sidebar */}
-      <div
-        className={`${
-          isSidebarOpen ? "w-64" : "w-0"
-        } transition-width duration-300 h-screen`}
-      >
-        {isSidebarOpen && <DesktopSidebar />}
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block">
+        <DesktopSidebar />
       </div>
+
+      {/* Mobile Sidebar */}
+      {isSidebarOpen &&
+        <div className="block lg:hidden fixed top-0 left-0 w-[280px] h-full bg-gray-100 z-50 shadow-lg">
+          <div className="py-4">
+            <div className="flex justify-between mb-10 px-3">
+              <div className="">
+                YaTharYone
+              </div>
+              <button onClick={toggleSidebar}>
+                <Cross1Icon />
+              </button>
+            </div>
+            <div>
+              <MobileSidebar />
+            </div>
+          </div>
+        </div>
+      }
+
 
       {/* Main Content */}
       <main className="flex flex-col w-full overflow-y-auto">
         {/* Header */}
-        <nav className="flex items-center justify-between p-3 bg-white shadow-md">
+        <nav className="flex items-center justify-between p-3 bg-white shadow-md z-50 sticky top-0">
           <button
             onClick={toggleSidebar}
             aria-label="Toggle Sidebar"

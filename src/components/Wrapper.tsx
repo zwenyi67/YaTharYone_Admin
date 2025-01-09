@@ -53,6 +53,10 @@ const router = createBrowserRouter([
         element: <SupplierFormView />,
       },
       {
+        path: "supplier-management/suppliers/:id/edit",
+        element: <SupplierFormView />,
+      },
+      {
         path: "supplier-management/purchasehistories",
         element: <PurchasesView />,
       },

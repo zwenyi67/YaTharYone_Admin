@@ -8,6 +8,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -27,6 +28,7 @@ import {
 import { useEffect, useState } from "react";
 import TableLoadingBar from "./TableLoadingBar";
 import TableToolbar from "./TableToolbar";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type ColumnVisibilityType = {
   [key: string]: boolean;
@@ -44,6 +46,7 @@ interface TableUIProps<TData, TValue> {
   search?: boolean;
   filterColumns?: string[] | [];
   columnFilterValue?: string;
+  newCreate?: string;
   filterColumnsState?: boolean;
   globalFilterEnabled?: boolean;
   sortColumn?: string;
@@ -68,6 +71,7 @@ export function TableUI<TData, TValue>({
   children,
   header,
   headerDescription,
+  newCreate,
   data,
   globalFilterEnabled = true,
   columnVisibility,
@@ -130,25 +134,51 @@ export function TableUI<TData, TValue>({
     return rankItem(value?.toString() || "", filterValue).passed;
   };
 
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
+  const clickPrevPage = () => {
+    () => table.previousPage()
+    setPageIndex(pageIndex - 1);
+  }
+
+  const clickNextPage = () => {
+    () => table.nextPage();
+    setPageIndex(pageIndex + 1);
+  }
+
+  const clickCustomPage = (pageIndex: number) => {
+    () => table.setPageIndex(pageIndex);
+    setPageIndex(pageIndex);
+  }
+
+  const clickPageSize = (e:any) => {
+      const newPageSize = Number(e.target.value);
+      table.setPageSize(newPageSize); // Update page size
+      setPageSize(e.target.value)
+    
+  }
   const table = useReactTable<TData>({
     data: data || [],
     columns,
     globalFilterFn: customGlobalFilterFn,
     getCoreRowModel: getCoreRowModel(),
-    onColumnFiltersChange:
-      search && filterColumnsState ? setColumnFilters : undefined,
+    getPaginationRowModel: getPaginationRowModel(), // Enable pagination
+    onColumnFiltersChange: search && filterColumnsState ? setColumnFilters : undefined,
     getSortedRowModel: sort ? getSortedRowModel() : undefined,
     getFilteredRowModel: search ? getFilteredRowModel() : undefined,
     state: {
       sorting: sort ? sorting : undefined,
+      columnVisibility,
       globalFilter: search && globalFilterEnabled ? globalFilter : undefined,
       columnFilters: search && filterColumnsState ? columnFilters : undefined,
+      pagination: {
+        pageIndex: pageIndex,
+        pageSize: pageSize,
+      },
     },
     onGlobalFilterChange: setGlobalFilter,
     onSortingChange: setSorting,
-    initialState: {
-      columnVisibility,
-    },
     ...opt,
   });
 
@@ -164,6 +194,7 @@ export function TableUI<TData, TValue>({
           sort={sort}
           setSelectedOpt={setSelectedOpt}
           header={header}
+          newCreate={newCreate}
           selectedOpt={selectedOpt}
           setGlobalFilter={setGlobalFilter}
           globalFilter={globalFilter}
@@ -175,49 +206,33 @@ export function TableUI<TData, TValue>({
       )}
       {sectionBelowToolbar}
       <Table>
+        {/* Table Header */}
         <TableHeader className={tableHeaderClass}>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header, index) => {
-                return (
-                  <TableHead
-                    className={`
-                    ${
-                      tableHeaderClass
-                        ? index === 0
-                          ? "rounded-tl-2xl"
-                          : ""
-                        : ""
-                    }
-                    ${
-                      tableHeaderClass
-                        ? index === columns.length - 2
-                          ? "rounded-tr-2xl"
-                          : ""
-                        : ""
-                    }
-                  `}
-                    key={header.id}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
+              {headerGroup.headers.map((header, index) => (
+                <TableHead
+                  key={header.id}
+                  className={`${index === 0 && tableHeaderClass ? "rounded-tl-2xl" : ""
+                    } ${index === columns.length - 2 && tableHeaderClass
+                      ? "rounded-tr-2xl"
+                      : ""
+                    }`}
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
+
+        {/* Table Body */}
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell
-                colSpan={table.getAllColumns().length}
-                className="p-0 align-top"
-              >
+              <TableCell colSpan={table.getAllColumns().length} className="p-0 align-top">
                 <TableLoadingBar />
               </TableCell>
             </TableRow>
@@ -240,6 +255,62 @@ export function TableUI<TData, TValue>({
           )}
         </TableBody>
       </Table>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-5">
+      <span>
+        Page {table.getState().pagination.pageIndex + 1} of{" "}
+        {table.getPageCount()}
+      </span>
+      <div className="flex justify-end items-center gap-2">
+        {/* Page Size Dropdown */}
+        <div>
+          <select
+            id="page-size"
+            className="px-3 py-1 bg-gray-200 rounded"
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => clickPageSize(e)}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
+        <button
+          onClick={clickPrevPage}
+          disabled={!table.getCanPreviousPage()}
+          className="p-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          <ChevronLeft />
+        </button>
+
+        {/* Page Numbers */}
+        <div className="flex gap-2">
+          {Array.from({ length: table.getPageCount() }).map((_, pageIndex) => (
+            <button
+              key={pageIndex}
+              onClick={() => clickCustomPage(pageIndex)}
+              className={`px-3 py-1 rounded ${pageIndex === table.getState().pagination.pageIndex
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200"
+                }`}
+            >
+              {pageIndex + 1}
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={clickNextPage}
+          disabled={!table.getCanNextPage()}
+          className="p-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          <ChevronRight />
+        </button>
+      </div>
+      </div>
+
     </div>
   );
 }
