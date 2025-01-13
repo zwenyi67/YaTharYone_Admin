@@ -1,28 +1,28 @@
 import { Button } from "@/components/ui/button"
 import { Pencil2Icon } from "@radix-ui/react-icons"
-import { GetSuppliersType } from "@/api/supplier/types"
 import { Link } from "react-router-dom"
 import { Info, Trash2Icon } from "lucide-react"
 import { useState } from "react"
 import api from '@/api';
 import { toast } from "@/hooks/use-toast"
 import { useQueryClient } from "@tanstack/react-query"
+import { GetInventoriesType } from "@/api/inventory/types"
 
-const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
+const ManageColumn = ({ data }: { data: GetInventoriesType }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isDetailOpen, setIsDetailOpen] = useState(false);
 	const queryClient = useQueryClient();
 
 
-	const { mutate: deleteSupplier } = api.supplier.deleteSupplier.useMutation({
+	const { mutate: deleteInventory } = api.inventory.deleteInventory.useMutation({
 		onSuccess: () => {
 			toast({
-				title: "Supplier Deleted successfully",
+				title: "Inventory Deleted successfully",
 				variant: "success",
 			});
 
 			queryClient.invalidateQueries({
-				queryKey: ["getSuppliers"],
+				queryKey: ["getInventories"],
 			});
 		},
 		onError: (error) => {
@@ -35,7 +35,7 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 	});
 
 	const handleDelete = (id: number) => {
-		deleteSupplier(id);
+		deleteInventory(id);
 		setIsDialogOpen(false);
 	};
 
@@ -45,7 +45,7 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 				<Info color="blue" />
 			</Button>
 			<Button variant={"columnIcon"} size={"icon"}>
-				<Link to={`/supplier-management/suppliers/${data.id}/edit`} state={{ data }}>
+				<Link to={`/inventory-management/${data.id}/edit`} state={{ data }}>
 					<Pencil2Icon color="green" />
 				</Link>
 			</Button>
@@ -57,7 +57,7 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 					<div className="bg-white p-6 rounded-md shadow-md transform transition-all duration-300 scale-100 hover:scale-105">
 						<h2 className="text-lg font-semibold mb-4">
-							Are you sure you want to delete this supplier?
+							Are you sure you want to delete this item?
 						</h2>
 						<div className="flex justify-center space-x-4">
 							<Button
@@ -80,7 +80,7 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 					<div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 scale-100 hover:scale-105">
 						<div className="flex items-center justify-between mb-4">
 							<h2 className="text-xl font-bold text-gray-800">
-								Supplier Details
+								Inventory Details
 							</h2>
 							<button
 								onClick={() => setIsDetailOpen(false)}
@@ -89,9 +89,9 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 								✕
 							</button>
 						</div>
-						<div className="space-y-3 text-gray-700">
+						{/* <div className="space-y-3 text-gray-700">
 							<div className="flex items-center space-x-2">
-								<span className="font-medium">Supplier Name:</span>
+								<span className="font-medium">Inventory Name:</span>
 								<span>{data.name}</span>
 							</div>
 							<div className="flex items-center space-x-2">
@@ -114,7 +114,7 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 								<span className="font-medium">Business Type:</span>
 								<span>{data.business_type}</span>
 							</div>
-						</div>
+						</div> */}
 						<div className="mt-6 flex justify-center space-x-4">
 							<Button
 								variant="secondary"

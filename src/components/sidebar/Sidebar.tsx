@@ -62,7 +62,7 @@ const MobileSidebar = () => {
 
 
   return (
-    <div>
+    <div className="h-full">
       <div className="px-3">
         {sidebarData.map((item) => (
           <div

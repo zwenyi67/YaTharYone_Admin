@@ -39,8 +39,13 @@ export const sidebarData = [
     icon: BoxIcon,
     subMenu: [
       {
-        routeNames: ["/inventory/create"],
-        name: "title.employee-management",
+        routeNames: ["/inventory-management/inventories"],
+        name: "title.inventory",
+        icon: User2Icon,
+      },
+      {
+        routeNames: ["/inventory-management/item-categories"],
+        name: "title.item-category",
         icon: User2Icon,
       },
     ],

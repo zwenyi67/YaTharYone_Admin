@@ -29,9 +29,9 @@ export const columns: ColumnDef<GetSuppliersType>[] = [
         <div>
           {row.original.profile === null ? (
             <div className="flex">
-              <div className="flex justify-center items-center rounded-full bg-secondary w-[55px] h-[55px]">
+              <div className="flex justify-center items-center rounded-full bg-secondary w-[55px] h-[55px] border">
                 <div className="font-bold text-xl text-white">
-                  {row.original.name.charAt(0)}
+                  {row.original.name.charAt(0).toUpperCase()}
                 </div>
               </div>
             </div>) :

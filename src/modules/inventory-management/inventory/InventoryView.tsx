@@ -3,25 +3,25 @@ import TableUI from "@/components/table/TableUI"
 import { t } from "i18next"
 import { columns } from "./columns"
 
-const PurchasesView = () => {
+const InventoryView = () => {
 
-	const { data, isFetching } = api.employee.getEmployees.useQuery()
+	const { data, isFetching } = api.inventory.getInventories.useQuery()
 
 	return (
 		<section className="m-4">
 			<div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-				{t("title.purchasing-transactions")}
+				{t("title.inventory-management")}
 			</div>
 			<div className="p-6 bg-white rounded-lg">
 				<TableUI
 					data={data}
 					columns={columns}
 					loading={isFetching}
-					header={t("title.purchasing-transactions")}
+					header={t("title.inventory-management")}
 					columnVisibility={{ created_at: false }}
-					filterColumns={["firstName"]}
+					filterColumns={["name"]}
 					sortColumn="created_at"
-					newCreate="/supplier-management/purchasehistories/supplierlist"
+					newCreate="/inventory-management/inventories/create"
 				>
 				</TableUI>
 
@@ -31,4 +31,4 @@ const PurchasesView = () => {
 	)
 }
 
-export default PurchasesView
+export default InventoryView

@@ -54,6 +54,9 @@
     "transcations": "Transcations",
     "purchasing-transactions": "Purchasing Transactions",
     "inventory-management": "Inventory Management",
+    "item-category-management": "Item Category Management",
+    "inventory": "Inventory",
+    "item-category": "Item Category",
     "employee-management": "Employee Management",
     "table-management": "Table Management",
     "category-management": "Category Management",
@@ -78,7 +81,14 @@
       "profile": "Profile"
     },
     "supplier-management": {
-      "suppliers" : {
+      "suppliers": {
+        "number": "No",
+        "name": "Supplier Name",
+        "email": "Email",
+        "phone": "Phone",
+        "profile": "Profile"
+      }, 
+      "purchases": {
         "number": "No",
         "name": "Supplier Name",
         "email": "Email",
@@ -86,35 +96,28 @@
         "profile": "Profile"
       }
     },
+    "inventory-management": {
+      "inventory": {
+        "number": "No",
+        "name": "Item Name",
+        "unit_of_measure": "Unit",
+        "unit_cost": "Cost",
+        "current_stock": "Current Stock",
+        "min_stock_level": "Min Stock Level",
+        "reorder_level": "Reorder Level"
+      },
+        "item-category": {
+          "number": "No",
+          "name": "Item Name",
+          "description": "Description"
+        }
+    },
     "table-management": {
       "number": "No",
       "tableNo": "Table Number",
       "capacity": "Capacity"
     },
     "sd": {}
-  },
-  "placeholder": {
-    "interviewer-name": "Interviewer Name",
-    "interview-score": "Interview Score"
-  },
-  "pool": {
-    "add-to-event": "Add to Event",
-    "approve-for-interview": "Approve for Interview",
-    "create-qr": "Create QR",
-    "watch-videos": "Watch Videos",
-    "candidate-details": "Candidate Details",
-    "interview-analysis": "Interview Analysis"
-  },
-  "candidate": {
-    "profile-checklist": "Profile CheckList",
-    "cannot": "Cannot",
-    "can": "can",
-    "ever": "Ever",
-    "never": "Never"
-  },
-  "job-position": {
-    "add-basic-question": "Add Basic Question",
-    "add-master-question": "Add Master Question"
   },
   "success-title": {
     "login": "You logged in with the following email:",

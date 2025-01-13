@@ -1,11 +1,10 @@
 import { useAuth } from "@/hooks";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import DesktopSidebar from "@/components/sidebar/DesktopSidebar";
 import ProfileBox from "./common/ProfileBox";
 import { useState } from "react";
 import { Menu as MenuIcon, X as XIcon } from "lucide-react";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import MobileSidebar from "@/components/sidebar/MobileSidebar";
+import MobileSidebar from "@/components/sidebar/Sidebar";
 
 const DefaultLayout = () => {
   const { isAuthenticated } = useAuth();
@@ -24,12 +23,17 @@ const DefaultLayout = () => {
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
-        <DesktopSidebar />
+        <div className="lg:flex flex-col hidden min-h-svh bg-gray-100 h-full transition-all duration-300 lg:min-w-[280px] shadow-lg">
+          <div className="flex flex-col items-center justify-center h-20">
+            <div className="">YaTharYone</div>
+          </div>
+          <MobileSidebar />
+        </div>
       </div>
 
       {/* Mobile Sidebar */}
       {isSidebarOpen &&
-        <div className="block lg:hidden fixed top-0 left-0 w-[280px] h-full bg-gray-100 z-50 shadow-lg">
+        <div className="block lg:hidden fixed top-0 left-0 w-[280px] h-full bg-gray-100 z-[100] shadow-lg">
           <div className="py-4">
             <div className="flex justify-between mb-10 px-3">
               <div className="">
@@ -50,7 +54,7 @@ const DefaultLayout = () => {
       {/* Main Content */}
       <main className="flex flex-col w-full overflow-y-auto">
         {/* Header */}
-        <nav className="flex items-center justify-between p-3 bg-white shadow-md z-50 sticky top-0">
+        <nav className="flex items-center justify-between p-3 bg-white shadow-md z-[50] sticky top-0">
           <button
             onClick={toggleSidebar}
             aria-label="Toggle Sidebar"
@@ -68,7 +72,7 @@ const DefaultLayout = () => {
         </nav>
 
         {/* Outlet for dynamic content */}
-        <div className="p-4">
+        <div className="p-4 z-[1]">
           <Outlet />
         </div>
       </main>

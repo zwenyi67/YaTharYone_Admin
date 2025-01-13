@@ -29,6 +29,12 @@ import MenuFormView from "@/modules/menu/MenuFormView";
 import SupplierView from "@/modules/supplier-management/supplier/SupplierView";
 import SupplierFormView from "@/modules/supplier-management/supplier/SupplierFormView";
 import PurchasesView from "@/modules/supplier-management/purchases/PurchasesView";
+import SupplierListView from "@/modules/supplier-management/purchases/SupplierListView";
+import PurchasesFormView from "@/modules/supplier-management/purchases/PurchasesFormView";
+import InventoryView from "@/modules/inventory-management/inventory/InventoryView";
+import InventoryFormView from "@/modules/inventory-management/inventory/InventoryFormView";
+import ItemCategoryFormView from "@/modules/inventory-management/item-category/ItemCategoryFormView";
+import ItemCategoryView from "@/modules/inventory-management/item-category/ItemCategoryView";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -60,23 +66,39 @@ const router = createBrowserRouter([
         path: "supplier-management/purchasehistories",
         element: <PurchasesView />,
       },
-      
       {
-        path: "inventory-management/:id/edit",
-        element: <EmployeeFormView />,
+        path: "/supplier-management/purchasehistories/supplierlist",
+        element: <SupplierListView />,
       },
+      {
+        path: "/supplier-management/purchasehistories/supplierlist/:id/create",
+        element: <PurchasesFormView />,
+      },
+      
       //Inventory Management
       {
-        path: "inventory-management",
-        element: <EmployeeView />,
+        path: "inventory-management/inventories",
+        element: <InventoryView />,
       },
       {
-        path: "inventory-management/create",
-        element: <EmployeeFormView />,
+        path: "inventory-management/inventories/create",
+        element: <InventoryFormView />,
       },
       {
-        path: "inventory-management/:id/edit",
-        element: <EmployeeFormView />,
+        path: "inventory-management/inventories/:id/edit",
+        element: <InventoryFormView />,
+      },
+      {
+        path: "inventory-management/item-categories",
+        element: <ItemCategoryView />,
+      },
+      {
+        path: "inventory-management/item-categories/create",
+        element: <ItemCategoryFormView />,
+      },
+      {
+        path: "inventory-management/item-categories/:id/edit",
+        element: <ItemCategoryFormView />,
       },
 
       //Employee Management

@@ -5,7 +5,7 @@ export interface GetSuppliersType extends TimeStamps {
   id: number;
   name: string;
   contact_person: string;
-  profile: File;
+  profile: string;
   phone: string;
   email: string;
   business_type: string;
