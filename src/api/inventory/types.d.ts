@@ -1,6 +1,5 @@
 import { TimeStamps } from "@/shared/types";
 
-
 export interface GetInventoriesType extends TimeStamps {
   id: number;
   name: string;
@@ -9,7 +8,7 @@ export interface GetInventoriesType extends TimeStamps {
   reorder_level: number;
   min_stock_level: number;
   is_perishable: boolean;
-  expiry_date: boolean;
+  expiry_date: date;
   item_category_id: number;
   description: string;
 }
@@ -21,8 +20,8 @@ export interface AddInventoryPayloadType {
   reorder_level: number;
   min_stock_level: number;
   is_perishable: boolean;
-  expiry_date: boolean;
-  item_category_id: number;
+  expiry_date: date;
+  item_category_id: number | string;
   description: string;
   createby?: number;
 }
@@ -35,8 +34,8 @@ export interface UpdateInventoryPayloadType {
   reorder_level: number;
   min_stock_level: number;
   is_perishable: boolean;
-  expiry_date: boolean;
-  item_category_id: number;
+  expiry_date: date;
+  item_category_id: number | string;
   description: string;
   updateby?: number;
 }
@@ -45,7 +44,7 @@ export interface DeleteInventoryType {
   id: string | number;
 }
 
-export interface GetRolesType {
+export interface GetItemCategoriesType {
   id: number;
   name: string;
 }

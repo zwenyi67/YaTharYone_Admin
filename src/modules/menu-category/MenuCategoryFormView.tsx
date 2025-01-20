@@ -8,10 +8,10 @@ import { CircleChevronLeft } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from "react-router-dom";
-import { AddInventoryPayloadType, GetItemCategoriesType, UpdateInventoryPayloadType } from '@/api/inventory/types';
 import { t } from 'i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DatePicker from '@/components/ui/datepicker';
+import { AddMenuCategoryPayloadType, GetMenuCategoriesType, UpdateMenuCategoryPayloadType } from '@/api/menu-category/types';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -61,34 +61,27 @@ const formSchema = z.object({
     required_error: "Expiry date is required.",
   }),
   item_category_id: z.string().min(1, {
-    message: "Item Category is required.",
+    message: "Menu Category is required.",
   }),
   description: z.string().optional(),
   createby: z.number().optional(), // Assuming this is optional for the form
 });
 
-export default function InventoryFormView() {
+export default function MenuCategoryFormView() {
 
   const navigate = useNavigate();
 
-  const { data, isFetching } = api.inventory.getItemCategories.useQuery();
+  const { data, isFetching } = api.menuCategory.getMenuCategories.useQuery();
 
   const location = useLocation();
   const { id } = useParams();
 
-  const passedData: AddInventoryPayloadType = location.state?.data;
+  const passedData: AddMenuCategoryPayloadType = location.state?.data;
 
-  const item: AddInventoryPayloadType = id
+  const item: AddMenuCategoryPayloadType = id
     ? { ...passedData }
     : {
       name: "",
-      unit_of_measure: "",
-      current_stock: 0,
-      min_stock_level: 0,
-      reorder_level: 0,
-      is_perishable: false,
-      expiry_date: null,
-      item_category_id: "",
       description: "",
       createby: 1,
     };
@@ -97,23 +90,16 @@ export default function InventoryFormView() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: item?.name || "",
-      unit_of_measure: item?.unit_of_measure || "",
-      current_stock: item?.current_stock || 0,
-      min_stock_level: item?.min_stock_level || 0,
-      reorder_level: item?.reorder_level || 0,
-      is_perishable: item?.is_perishable || false,
-      item_category_id: item?.item_category_id.toString() || "",
-      expiry_date: item?.expiry_date ? new Date(item.expiry_date) : undefined,
       description: item?.description || "",
       createby: item?.createby || 1,
     },
   });
 
-  const { mutate: addInventory } =
-    api.inventory.addInventory.useMutation({
+  const { mutate: addCategory } =
+    api.menuCategory.addMenuCategory.useMutation({
       onSuccess: () => {
         toast({
-          title: "New Inventory added successfully",
+          title: "New Category added successfully",
           variant: "success",
         });
         navigate("/inventory-management/inventories");
@@ -127,11 +113,11 @@ export default function InventoryFormView() {
       },
     });
 
-  const { mutate: updateInventory } =
-    api.inventory.updateInventory.useMutation({
+  const { mutate: updateCategory } =
+    api.menuCategory.updateMenuCategory.useMutation({
       onSuccess: () => {
         toast({
-          title: "Inventory updated successfully",
+          title: "Category updated successfully",
           variant: "success",
         });
         navigate("/inventory-management/inventories");
@@ -165,13 +151,13 @@ export default function InventoryFormView() {
         formData.append("id", id);
 
         // Call update API
-        await updateInventory(formData as unknown as UpdateInventoryPayloadType);
+        await updateCategory(formData as unknown as UpdateMenuCategoryPayloadType);
       } else {
         // For add form
         formData.append("createby", (item.createby || 1).toString());
 
         // Call add API
-        await addInventory(formData as unknown as AddInventoryPayloadType);
+        await addCategory(formData as unknown as AddMenuCategoryPayloadType);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -191,7 +177,7 @@ export default function InventoryFormView() {
             </Link>
           </div>
           <div className='text-base font-semibold mt-1 text-secondary'>
-            {id ? "Edit Inventory Item" : "Add New Inventory Item"}
+            {id ? "Edit Category Item" : "Add New Category Item"}
           </div>
         </div>
         <Form {...form}>
@@ -203,7 +189,7 @@ export default function InventoryFormView() {
                 name="name"
                 render={({ field }) => (
                   <FormItem >
-                    <FormLabel>Inventory Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormLabel>Category Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                     <FormControl>
                       <Input placeholder="Full Name" {...field} />
                     </FormControl>
@@ -253,7 +239,7 @@ export default function InventoryFormView() {
                           <SelectValue placeholder={isFetching ? 'Loading' : 'Select Category'} />
                         </SelectTrigger>
                         <SelectContent>
-                          {data?.map((cate: GetItemCategoriesType) => (
+                          {data?.map((cate: GetMenuCategoriesType) => (
                             <SelectItem key={cate.id} value={cate.id.toString()}>{cate.name}</SelectItem>
                           ))}
 

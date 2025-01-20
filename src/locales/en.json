@@ -90,10 +90,10 @@
       }, 
       "purchases": {
         "number": "No",
-        "name": "Supplier Name",
-        "email": "Email",
-        "phone": "Phone",
-        "profile": "Profile"
+        "supplier": "Supplier",
+        "total_amount": "Total Amount",
+        "purchase_note": "Purchase Note",
+        "purchase_date": "Purchase Date"
       }
     },
     "inventory-management": {

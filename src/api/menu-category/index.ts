@@ -6,22 +6,20 @@ import {
 } from "@tanstack/react-query";
 import axios from "axios";
 import {
-  AddInventoryPayloadType,
-  GetInventoriesType,
-  GetItemCategoriesType,
+  AddMenuCategoryPayloadType,
+  GetMenuCategoriesType,
   PostResponse,
-  UpdateInventoryPayloadType,
+  UpdateMenuCategoryPayloadType,
 } from "./types";
 
-const inventory_URL = "/admin/inventories";
-const itemCategory_URL = "/admin/item-categories";
+const menuCategory_URL = "/admin/item-categories";
 
-export const getInventories = {
-  useQuery: (opt?: UseQueryOptions<GetInventoriesType[], Error>) =>
-    useQuery<GetInventoriesType[], Error>({
-      queryKey: ["getInventories"],
+export const getMenuCategories = {
+  useQuery: (opt?: UseQueryOptions<GetMenuCategoriesType[], Error>) =>
+    useQuery<GetMenuCategoriesType[], Error>({
+      queryKey: ["getMenuCategories"],
       queryFn: async () => {
-        const response = await axios.get(`${inventory_URL}`);
+        const response = await axios.get(`${menuCategory_URL}`);
 
         const { data, status, message } = response.data;
 
@@ -36,40 +34,20 @@ export const getInventories = {
     }),
 };
 
-export const getItemCategories = {
-  useQuery: (opt?: UseQueryOptions<GetItemCategoriesType[], Error>) =>
-    useQuery<GetItemCategoriesType[], Error>({
-      queryKey: ["getItemCategories"],
-      queryFn: async () => {
-        const response = await axios.get(`${itemCategory_URL}`);
-
-        const { data, status, message } = response.data;
-
-        if (status !== 0) {
-          throw new Error(message);
-        }
-
-        return data;
-      },
-      throwOnError: true,
-      ...opt,
-    }),
-};
-
-export const addInventory = {
+export const addMenuCategory = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
       Error,
-      AddInventoryPayloadType,
+      AddMenuCategoryPayloadType,
       unknown
     >
   ) => {
     return useMutation({
-      mutationKey: ["addInventory"],
-      mutationFn: async (payload: AddInventoryPayloadType) => {
+      mutationKey: ["addMenuCategory"],
+      mutationFn: async (payload: AddMenuCategoryPayloadType) => {
         const response = await axios.post(
-          `${inventory_URL}/create`,
+          `${menuCategory_URL}/create`,
           payload
         )
 
@@ -89,20 +67,20 @@ export const addInventory = {
   },
 }
 
-export const updateInventory = {
+export const updateMenuCategory = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
       Error,
-      UpdateInventoryPayloadType,
+      UpdateMenuCategoryPayloadType,
       unknown
     >
   ) => {
     return useMutation({
-      mutationKey: ["updateInventory"],
-      mutationFn: async (payload: UpdateInventoryPayloadType) => {
+      mutationKey: ["updateMenuCategory"],
+      mutationFn: async (payload: UpdateMenuCategoryPayloadType) => {
         const response = await axios.post(
-          `${inventory_URL}/edit`,
+          `${menuCategory_URL}/edit`,
           payload
         )
 
@@ -122,7 +100,7 @@ export const updateInventory = {
   },
 }
 
-export const deleteInventory = {
+export const deleteMenuCategory = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
@@ -132,10 +110,10 @@ export const deleteInventory = {
     >
   ) => {
     return useMutation({
-      mutationKey: ["deleteInventory"],
+      mutationKey: ["deleteMenuCategory"],
       mutationFn: async (id: number) => {
         const response = await axios.post(
-          `${inventory_URL}/${id}/delete`
+          `${menuCategory_URL}/${id}/delete`
         );
 
         const { data, status, message } = response.data;

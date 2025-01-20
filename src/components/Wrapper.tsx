@@ -22,8 +22,8 @@ import EmployeeView from "@/modules/employee/EmployeeView";
 import EmployeeFormView from "@/modules/employee/EmployeeFormView";
 import TableView from "@/modules/table/TableView";
 import TableFormView from "@/modules/table/TableFormView";
-import CategoryView from "@/modules/category/CategoryView";
-import CategoryFormView from "@/modules/category/CategoryFormView";
+import MenuCategoryView from "@/modules/menu-category/MenuCategoryView";
+import MenuCategoryFormView from "@/modules/menu-category/MenuCategoryFormView";
 import MenuView from "@/modules/menu/MenuView";
 import MenuFormView from "@/modules/menu/MenuFormView";
 import SupplierView from "@/modules/supplier-management/supplier/SupplierView";
@@ -62,6 +62,7 @@ const router = createBrowserRouter([
         path: "supplier-management/suppliers/:id/edit",
         element: <SupplierFormView />,
       },
+      // Purchasing Transcations
       {
         path: "supplier-management/purchasehistories",
         element: <PurchasesView />,
@@ -132,15 +133,15 @@ const router = createBrowserRouter([
       //Category Management
       {
         path: "categories",
-        element: <CategoryView />,
+        element: <MenuCategoryView />,
       },
       {
         path: "categories/create",
-        element: <CategoryFormView />,
+        element: <MenuCategoryFormView />,
       },
       {
         path: "categories/:id/edit",
-        element: <CategoryFormView />,
+        element: <MenuCategoryFormView />,
       },
 
       //Menu Management

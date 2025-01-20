@@ -1,336 +1,299 @@
-import { AddEmployeePayloadType, UpdateEmployeePayloadType } from '@/api/employee/types';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { CircleChevronLeft } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
-import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { GetItemCategoriesType } from '@/api/inventory/types';
+import { AddPurchaseItemPayloadType, ConfirmPurchaseItemsPayloadType, GetItemType } from '@/api/purchase-item/types';
 import { useEffect, useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Cross2Icon } from '@radix-ui/react-icons';
 
 
 const formSchema = z.object({
-  employee_id: z.string().nonempty({
-    message: "Employee Id is required.",
+  item_category_id: z.string().min(1, {
+    message: "Item Category is required.",
   }),
-  fullname: z.string().min(2, {
-    message: "Full name must be at least 2 characters.",
+  item_id: z.string().min(1, {
+    message: "Item is required.",
   }),
-  profile: z
-    .instanceof(File, {
-      message: "Profile photo is required and must be an image file.",
-    })
-    .refine(
-      (file) =>
-        ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
-      {
-        message: "Only PNG, JPG, or JPEG files are allowed.",
+  unit_cost: z.union([
+    z.string(),
+    z.number()
+  ])
+    .transform((value) => {
+      if (typeof value === 'string' && !isNaN(Number(value))) {
+        return Number(value);
       }
-    ), // Validate as an instance of File
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits.",
-  }),
-  email: z.string().email({
-    message: "Must be a valid email address.",
-  }),
-  gender: z.string().nonempty({
-    message: "Gender must be Male, Female, or Other.",
-  }),
-  birth_date: z.date({
-    required_error: "Birth date is required.",
-  }),
-  address: z.string().min(2, {
-    message: "Address must be at least 2 characters.",
-  }),
-  date_hired: z.date({
-    required_error: "Hired date is required.",
-  }),
-  role_id: z.number({
-    required_error: "Role ID is required.",
-  }),
-  createby: z.number().optional(), // Assuming this is optional for the form
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
+      return value; // No transformation for already a number
+    })
+    .refine((value) => {
+      return typeof value === 'number' && value >= 0.01;
+    }, { message: "Unit cost must be greater than 0." }),
+
+  quantity: z.union([
+    z.string(),
+    z.number()
+  ])
+    .transform((value) => {
+      if (typeof value === 'string' && !isNaN(Number(value))) {
+        return Number(value);
+      }
+      return value;
+    })
+    .refine((value) => {
+      return typeof value === 'number' && value >= 1;
+    }, { message: "Quantity must be greater than 0." }),
 });
 
 export default function PurchasesFormView() {
 
   const navigate = useNavigate();
 
+    const { id : supplier_id } = useParams();
 
-  const location = useLocation();
-  const { id } = useParams();
-
-  const passedData = location.state?.data;
-
-  const emp: AddEmployeePayloadType = id
-    ? { ...passedData }
-    : {
-      employee_id: "",
-      fullname: "",
-      profile: undefined,
-      phone: "",
-      email: "",
-      gender: "male",
-      birth_date: null,
-      address: "",
-      date_hired: null,
-      role_id: 1,
-      createby: 1,
-      username: "",
-      password: "",
-    };
+  const item: AddPurchaseItemPayloadType = {
+    item_category_id: "",
+    item_id: "",
+    item_name: "",
+    unit_of_measure: "",
+    unit_cost: "",
+    quantity: "",
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      employee_id: emp?.employee_id || "",
-      fullname: emp?.fullname || "",
-      profile: emp?.profile,
-      phone: emp?.phone || "",
-      email: emp?.email || "",
-      gender: emp?.gender || "",
-      birth_date: emp?.birth_date ? new Date(emp.birth_date) : undefined,
-      address: emp?.address || "",
-      date_hired: emp?.date_hired ? new Date(emp.date_hired) : undefined,
-      role_id: emp?.role_id || 1,
-      createby: emp?.createby || 1,
-      username: emp?.username || "",
-      password: emp?.password || "",
+      item_category_id: item?.item_category_id.toString() || "",
+      item_id: item?.item_id.toString() || "",
+      unit_cost: item?.unit_cost || "",
+      quantity: item?.quantity || "",
     },
   });
 
-  const { mutate: addEmployee } =
-    api.employee.addEmployee.useMutation({
-      onSuccess: () => {
-        toast({
-          title: "New Employee added successfully",
-          variant: "success",
-        });
-        navigate("/employees");
-      },
-      onError: (error) => {
-        console.error("Error adding Employee process: ", error);
-        form.setError("fullname", { type: "custom", message: error.message });
-        toast({
-          title: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+  const { data: cates, isFetching: isCateFetching } = api.inventory.getItemCategories.useQuery();
 
-  const { mutate: updateEmployee } =
-    api.employee.updateEmployee.useMutation({
-      onSuccess: () => {
-        toast({
-          title: "Employee updated successfully",
-          variant: "success",
-        });
-        navigate("/employees");
-      },
-      onError: (error) => {
-        console.error("Error updating Employee process: ", error);
-        form.setError("fullname", { type: "custom", message: error.message });
-        toast({
-          title: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+  const itemCategoryId = useWatch({
+    control: form.control,
+    name: "item_category_id", // Field to watch
+  });
+
+  const unit = useWatch({
+    control: form.control,
+    name: "item_id"
+  })
+  const unitOnly = unit ? unit.split(',')[2]?.trim() : '';
+
+  const { data: items, isFetching: isItemFetching } = api.purchaseItem.getItems.useQuery(itemCategoryId);
+
+  const [purchases, SetPurchases] = useState<AddPurchaseItemPayloadType[]>([]);
 
 
-  const onSubmit = async (emp: z.infer<typeof formSchema>) => {
+  const onSubmit = async (item: z.infer<typeof formSchema>) => {
     try {
-      // Format dates and create FormData
-      const formData = new FormData();
-      formData.append("employee_id", emp.employee_id);
-      formData.append("fullname", emp.fullname);
+      const [id, name, unit] = (item.item_id as string).split(',');
+      const newPurchaseItem: AddPurchaseItemPayloadType = {
+        item_id: id.trim(), // or parseInt(id.trim()) if id is numeric
+        item_name: name.trim(),
+        unit_of_measure: unit.trim(),
+        item_category_id: item.item_category_id,
+        unit_cost: item.unit_cost,
+        quantity: item.quantity,
+      };
+      SetPurchases((prevPurchases: AddPurchaseItemPayloadType[]) => {
+        const existingItemIndex = prevPurchases.findIndex((p) => p.item_id === newPurchaseItem.item_id);
 
-      // Handle profile based on whether it's a file or an existing URL
-      const profile = form.getValues("profile");
-      if (profile instanceof File) {
-        formData.append("profile", profile); // Append the new file
-      } else if (id && emp.profile) {
-        formData.append("profile", emp.profile); // Append the existing profile URL
-      }
+        if (existingItemIndex !== -1) {
+          // Item exists, update quantity
+          const updatedPurchases = [...prevPurchases];
+          updatedPurchases[existingItemIndex] = {
+            ...updatedPurchases[existingItemIndex],
+            quantity: updatedPurchases[existingItemIndex].quantity + newPurchaseItem.quantity,
+          };
+          return updatedPurchases;
+        }
 
-      formData.append("phone", emp.phone);
-      formData.append("email", emp.email);
-      formData.append("gender", emp.gender);
-      formData.append("birth_date", format(emp.birth_date, "yyyy-MM-dd"));
-      formData.append("address", emp.address);
-      formData.append("date_hired", format(emp.date_hired, "yyyy-MM-dd"));
-      formData.append("role_id", emp.role_id.toString());
-      formData.append("username", emp.username);
-      formData.append("password", emp.password);
-
-      if (id) {
-        // For edit form
-        formData.append("updateby", (emp.createby || 1).toString());
-        formData.append("id", id);
-
-        // Call update API
-        await updateEmployee(formData as unknown as UpdateEmployeePayloadType);
-      } else {
-        // For add form
-        formData.append("createby", (emp.createby || 1).toString());
-
-        // Call add API
-        await addEmployee(formData as unknown as AddEmployeePayloadType);
-      }
+        // Item does not exist, add as a new purchase
+        return [...prevPurchases, newPurchaseItem];
+      });
+      form.reset({
+        item_category_id: "",
+        item_id: "",
+        unit_cost: "",
+        quantity: "",
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
 
-
-
-
-  const [preview, setPreview] = useState<string | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (id && emp.profile) {
-      const fileUrl = "http://127.0.0.1:8000" + emp.profile;
-      setPreview(fileUrl); // Set the preview to the existing profile URL
-      //form.setValue("profile", null); // Do not set the profile as a File yet
-    }
-  }, [id, emp.profile]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-      if (!allowedTypes.includes(file.type)) {
-        setFileError("Only PNG, JPG, or JPEG files are allowed.");
-        setPreview(preview); // Keep the existing preview
-        return;
-      }
-
-      setFileError(null);
-      form.setValue("profile", file); // Set the file in the form state
-      const reader = new FileReader();
-      reader.onload = () => setPreview(reader.result as string); // Show preview as base64 URL
-      reader.readAsDataURL(file);
-    }
+  const removeItem = (purchase: AddPurchaseItemPayloadType) => {
+    SetPurchases((prevPurchases: AddPurchaseItemPayloadType[]) =>
+      prevPurchases.filter((item) => item.item_id !== purchase.item_id)
+    );
   };
 
+  useEffect(() => {
+    if (itemCategoryId) {
+      form.setValue("item_id", ""); // Reset item_id to empty
+    }
+  }, [itemCategoryId, form]);
 
+  useEffect(() => {
+  }, [purchases]);
+
+  const { mutate: confirmPurchases } =
+    api.purchaseItem.confirmPurchases.useMutation({
+      onSuccess: () => {
+        toast({
+          title: "New Purchase Transaction added successfully",
+          variant: "success",
+        });
+        navigate("/supplier-management/purchasehistories");
+      },
+      onError: (error) => {
+        //form.setError("name", { type: "custom", message: error.message });
+        toast({
+          title: error.message,
+          variant: "destructive",
+        });
+      },
+    });
+
+  const confirmPurchase = () => {
+    console.log("clicking");
+    const payload = {
+      purchase_items: purchases,
+      supplier_id: supplier_id,
+      total_amount: 1000,
+      purchase_note: "Hello purchase",
+    }
+    confirmPurchases(payload as ConfirmPurchaseItemsPayloadType);
+  }
+
+  const cancelPurchase = () => {
+    SetPurchases([]);
+  }
 
   return (
     <section className="m-4">
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
-            <Link to={'/supplier-management/suppliers'}>
-              <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500'/>
+            <Link to={'/supplier-management/purchasehistories'}>
+              <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
             </Link>
           </div>
           <div className='text-base font-semibold mt-1 text-secondary'>
-            {id ? "Edit Supplier" : "Add New Supplier"}
+            Purchsing Item List
           </div>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div>
-              <label
-                htmlFor="profilePhoto"
-                className="flex h-48 w-48 cursor-pointer items-center justify-center rounded-md border-2 border-gray-300 bg-gray-50 text-gray-500 hover:border-blue-500 hover:text-blue-500"
-                style={{
-                  backgroundImage: preview ? `url(${preview})` : "none",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {!preview && <span className="text-center">Click to upload Profile</span>}
-              </label>
-              <input
-                type="file"
-                id="profilePhoto"
-                accept="image/png, image/jpeg, image/jpg"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-              {fileError && <p className="text-red-500 text-sm">{fileError}</p>}
-            </div>
-            <div className='grid grid-cols-2 gap-6 mt-5'>
-              {/* Full Name */}
-              <FormField
-                control={form.control}
-                name="fullname"
-                render={({ field }) => (
-                  <FormItem >
-                    <FormLabel>Supplier Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Full Name" {...field} />
-                    </FormControl>
-                    <FormMessage/>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="fullname"
-                render={({ field }) => (
-                  <FormItem >
-                    <FormLabel>Contact Person <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Contact Person" {...field} />
-                    </FormControl>
-                    <FormMessage/>
-                  </FormItem>
-                )}
-              />
-              {/* Phone */}
-              <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                      <FormControl>
-                        <Input placeholder="Phone Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              {/* Email */}
+            <div className='grid grid-cols-7 gap-6 mt-5'>
+              {/*Item Category */}
+              <div className='col-span-2'>
                 <FormField
                   control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                      <FormControl>
-                        <Input placeholder="Email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              {/* Address */}
-                <FormField
-                  control={form.control}
-                  name="address"
+                  name="item_category_id"
                   render={({ field }) => (
                     <FormItem >
-                      <FormLabel>Address <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                      <FormLabel>Item Category <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                       <FormControl>
-                        <Input placeholder="Address" {...field} />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder={isCateFetching ? 'Loading' : 'Select Category'} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {cates?.map((cate: GetItemCategoriesType) => (
+                              <SelectItem key={cate.id} value={cate.id.toString()}>{cate.name}</SelectItem>
+                            ))}
+
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+              </div>
+              {/* Item Name */}
+              <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name="item_id"
+                  render={({ field }) => (
+                    <FormItem >
+                      <FormLabel>Item Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                      <FormControl>
+                        <Select disabled={!itemCategoryId} value={field.value}
+                          onValueChange={(value) => field.onChange(value)} defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder={isItemFetching ? 'Loading' : ''} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {items?.map((item: GetItemType) => (
+                              <SelectItem key={item.id} value={`${item.id.toString()},${item.name},${item.unit_of_measure}`}>{item.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Unit of Measure */}
+              <div>
+                <div className="">
+                  <FormLabel>Unit</FormLabel>
+                  <Input disabled placeholder={unitOnly} />
+                </div>
+              </div>
+              {/* Unit Cost */}
+              <div>
+                <FormField
+                  control={form.control}
+                  name="unit_cost"
+                  render={({ field }) => (
+                    <FormItem >
+                      <FormLabel>Unit Cost <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                      <FormControl>
+                        <Input type='number' placeholder='0' {...field}
+                          onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Quantity */}
+              <div>
+                <FormField
+                  control={form.control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <FormItem >
+                      <FormLabel>Quantity <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                      <FormControl>
+                        <Input type='number' placeholder='0' {...field}
+                          onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
             <div>
               <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-5">
@@ -339,6 +302,68 @@ export default function PurchasesFormView() {
             </div>
           </form>
         </Form>
+
+        <div className='flex justify-center mt-10 p-5'>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead >
+                </TableHead>
+                <TableHead >No</TableHead>
+                <TableHead>Item Name</TableHead>
+                <TableHead>Unit of Measure</TableHead>
+                <TableHead>Unit Cost</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Total</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {purchases.length > 0 ? (
+                purchases.map((purchase, index) => (
+                  <>
+                    <TableRow key={purchase.item_id}>
+                      <TableCell><button onClick={() => removeItem(purchase)} className='bg-primary hover:bg-red-500 rounded-full p-1 text-white'><Cross2Icon className='h-3 w-3' /></button></TableCell>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{purchase.item_name}</TableCell>
+                      <TableCell>{purchase.unit_of_measure}</TableCell>
+                      <TableCell>${purchase.unit_cost}</TableCell>
+                      <TableCell>{purchase.quantity}</TableCell>
+                      <TableCell>${purchase.unit_cost * purchase.quantity}</TableCell>
+                    </TableRow>
+                  </>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-24 text-center">
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {purchases.length > 0 && (
+                <>
+                  <TableRow>
+                    <TableCell colSpan={6}>Total Amount</TableCell>
+                    <TableCell>
+                      ${purchases.reduce((total, purchase) => total + (purchase.unit_cost * purchase.quantity), 0).toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <button onClick={cancelPurchase} className='bg-primary hover:bg-red-500 text-white p-2 px-4 rounded-sm'>Cancel</button>
+                    </TableCell>
+                    <TableCell>
+                      <button onClick={confirmPurchase} className='bg-secondary hover:bg-blue-500 text-white p-2 px-4 rounded-sm'>Confirm</button>
+                    </TableCell>
+                  </TableRow>
+                </>
+              )}
+
+            </TableBody>
+          </Table>
+
+        </div>
       </div>
     </section >
   )

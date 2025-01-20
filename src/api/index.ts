@@ -4,6 +4,8 @@ import * as supplier from "./supplier";
 import * as table from "./table";
 import * as inventory from "./inventory";
 import * as itemCategory from "./item-category";
+import * as menuCategory from "./menu-category";
+import * as purchaseItem from "./purchase-item";
 
 class API {
   auth: typeof auth;
@@ -12,6 +14,8 @@ class API {
   table: typeof table;
   inventory: typeof inventory;
   itemCategory: typeof itemCategory;
+  menuCategory: typeof menuCategory;
+  purchaseItem: typeof purchaseItem;
 
 
   constructor() {
@@ -21,6 +25,8 @@ class API {
     this.table = table;
     this.inventory = inventory;
     this.itemCategory = itemCategory;
+    this.menuCategory = menuCategory;
+    this.purchaseItem = purchaseItem;
   }
 }
 

@@ -41,7 +41,7 @@ const ManageColumn = ({ data }: { data: GetItemCategoriesType }) => {
 	return (
 		<div className="flex items-center justify-center">
 			<Button variant={"columnIcon"} size={"icon"}>
-				<Link to={`/inventory-management/${data.id}/edit`} state={{ data }}>
+				<Link to={`/inventory-management/item-categories/${data.id}/edit`} state={{ data }}>
 					<Pencil2Icon color="green" />
 				</Link>
 			</Button>

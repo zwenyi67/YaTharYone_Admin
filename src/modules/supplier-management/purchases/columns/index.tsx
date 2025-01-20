@@ -2,14 +2,14 @@ import TableHeaderCell from "@/components/table/TableHeaderCell";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import ManageColumn from "./ManageColumn";
-import { GetEmployeesType } from "@/api/employee/types";
+import { GetPurchaseType } from "@/api/purchase-item/types";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-const baseIndex = 'fields.employee-management'
+const baseIndex = 'fields.supplier-management.purchases'
 
-export const columns: ColumnDef<GetEmployeesType>[] = [
+export const columns: ColumnDef<GetPurchaseType>[] = [
   {
     accessorKey: "number",
     header: () => <TableHeaderCell>{`${baseIndex}.number`}</TableHeaderCell>,
@@ -22,41 +22,35 @@ export const columns: ColumnDef<GetEmployeesType>[] = [
   },
   {
     accessorKey: "profile",
-    header: () => <TableHeaderCell>{`${baseIndex}.profile`}</TableHeaderCell>,
+    header: () => <TableHeaderCell>{`${baseIndex}.supplier`}</TableHeaderCell>,
     cell: ({ row }) => {
-      const profileUrl = `http://127.0.0.1:8000${row.original.profile}`;
+      const profileUrl = `http://127.0.0.1:8000${row.original.supplier.profile}`;
       return (
-        <div>
-          <img
+        <div className="flex justify-center flex-col">
+          <img className=""
             src={profileUrl} 
             alt="profile"
             style={{ width: "50px", height: "50px", borderRadius: "50%" }}
           />
+          <div className="mt-2">{row.original.supplier.name}</div>
         </div>
       );
     },
     filterFn: "includesString",
   },
   {
-    accessorKey: "fullname",
-    header: () => <TableHeaderCell>{`${baseIndex}.fullname`}</TableHeaderCell>,
+    accessorKey: "total_amount",
+    header: () => <TableHeaderCell>{`${baseIndex}.total_amount`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.fullname}</div>;
+      return <div>${row.original.total_amount}</div>;
     },
     filterFn: "includesString",
   },
   {
-    accessorKey: "email",
-    header: () => <TableHeaderCell className="text-center">{`${baseIndex}.email`}</TableHeaderCell>,
+    accessorKey: "purchase_note",
+    header: () => <TableHeaderCell className="text-center">{`${baseIndex}.purchase_note`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div className="text-center">{row.original.email}</div>;
-    },
-  },
-  {
-    accessorKey: "phone",
-    header: () => <TableHeaderCell>{`${baseIndex}.phone`}</TableHeaderCell>,
-    cell: ({ row }) => {
-      return <div>{row.original.phone}</div>;
+      return <div className="text-center">{row.original.purchase_note}</div>;
     },
   },
   {

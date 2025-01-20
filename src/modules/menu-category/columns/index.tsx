@@ -2,14 +2,14 @@ import TableHeaderCell from "@/components/table/TableHeaderCell";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import ManageColumn from "./ManageColumn";
-import { GetEmployeesType } from "@/api/employee/types";
+import { GetInventoriesType } from "@/api/inventory/types";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-const baseIndex = 'fields.employee-management'
+const baseIndex = 'fields.inventory-management.inventory'
 
-export const columns: ColumnDef<GetEmployeesType>[] = [
+export const columns: ColumnDef<GetInventoriesType>[] = [
   {
     accessorKey: "number",
     header: () => <TableHeaderCell>{`${baseIndex}.number`}</TableHeaderCell>,
@@ -21,46 +21,36 @@ export const columns: ColumnDef<GetEmployeesType>[] = [
     },
   },
   {
-    accessorKey: "profile",
-    header: () => <TableHeaderCell>{`${baseIndex}.profile`}</TableHeaderCell>,
+    accessorKey: "name",
+    header: () => <TableHeaderCell>{`${baseIndex}.name`}</TableHeaderCell>,
     cell: ({ row }) => {
-      const profileUrl = `http://127.0.0.1:8000${row.original.profile}`;
-      return (
-        <div>
-          <img
-            src={profileUrl} 
-            alt="profile"
-            style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-          />
-        </div>
-      );
+      return <div>{row.original.name}</div>;
     },
     filterFn: "includesString",
   },
   {
-    accessorKey: "fullname",
-    header: () => <TableHeaderCell>{`${baseIndex}.fullname`}</TableHeaderCell>,
+    accessorKey: "current_stock",
+    header: () => <TableHeaderCell>{`${baseIndex}.current_stock`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.fullname}</div>;
-    },
-    filterFn: "includesString",
-  },
-  {
-    accessorKey: "email",
-    header: () => <TableHeaderCell className="text-center">{`${baseIndex}.email`}</TableHeaderCell>,
-    cell: ({ row }) => {
-      return <div className="text-center">{row.original.email}</div>;
+      return <div>{row.original.current_stock} {row.original.unit_of_measure}</div>;
     },
   },
   {
-    accessorKey: "phone",
-    header: () => <TableHeaderCell>{`${baseIndex}.phone`}</TableHeaderCell>,
+    accessorKey: "min_stock_level",
+    header: () => <TableHeaderCell>{`${baseIndex}.min_stock_level`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.phone}</div>;
+      return <div>{row.original.min_stock_level}</div>;
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "reorder_level",
+    header: () => <TableHeaderCell>{`${baseIndex}.reorder_level`}</TableHeaderCell>,
+    cell: ({ row }) => {
+      return <div>{row.original.reorder_level}</div>;
+    },
+  },
+  {
+    accessorKey: "created_at",
     header: () => <TableHeaderCell>{`${baseIndex}.created_at`}</TableHeaderCell>,
     cell: ({ row }) => {
       return (

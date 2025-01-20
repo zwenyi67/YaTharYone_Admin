@@ -29,17 +29,10 @@ export const columns: ColumnDef<GetInventoriesType>[] = [
     filterFn: "includesString",
   },
   {
-    accessorKey: "unit_of_meausre",
-    header: () => <TableHeaderCell className="text-center">{`${baseIndex}.unit_of_measure`}</TableHeaderCell>,
-    cell: ({ row }) => {
-      return <div className="text-center">1 {row.original.unit_of_measure}</div>;
-    },
-  },
-  {
     accessorKey: "current_stock",
     header: () => <TableHeaderCell>{`${baseIndex}.current_stock`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.current_stock}</div>;
+      return <div>{row.original.current_stock} {row.original.unit_of_measure}</div>;
     },
   },
   {
