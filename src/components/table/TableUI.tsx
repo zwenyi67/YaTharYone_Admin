@@ -152,11 +152,11 @@ export function TableUI<TData, TValue>({
     setPageIndex(pageIndex);
   }
 
-  const clickPageSize = (e:any) => {
-      const newPageSize = Number(e.target.value);
-      table.setPageSize(newPageSize); // Update page size
-      setPageSize(e.target.value)
-    
+  const clickPageSize = (e: any) => {
+    const newPageSize = Number(e.target.value);
+    table.setPageSize(newPageSize); // Update page size
+    setPageSize(e.target.value)
+
   }
   const table = useReactTable<TData>({
     data: data || [],
@@ -257,60 +257,61 @@ export function TableUI<TData, TValue>({
       </Table>
 
       {/* Pagination Controls */}
-      <div className="flex justify-between items-center mt-5">
-      <span>
-        Page {table.getState().pagination.pageIndex + 1} of{" "}
-        {table.getPageCount()}
-      </span>
-      <div className="flex justify-end items-center gap-2">
-        {/* Page Size Dropdown */}
-        <div>
-          <select
-            id="page-size"
-            className="px-3 py-1 bg-gray-200 rounded"
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => clickPageSize(e)}
-          >
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-          </select>
-        </div>
+      {table.getRowModel().rows?.length > 0 &&
+        <div className="flex justify-between items-center mt-5">
+          <span>
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </span>
+          <div className="flex justify-end items-center gap-2">
+            {/* Page Size Dropdown */}
+            <div>
+              <select
+                id="page-size"
+                className="px-3 py-1 bg-gray-200 rounded"
+                value={table.getState().pagination.pageSize}
+                onChange={(e) => clickPageSize(e)}
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
 
-        <button
-          onClick={clickPrevPage}
-          disabled={!table.getCanPreviousPage()}
-          className="p-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          <ChevronLeft />
-        </button>
-
-        {/* Page Numbers */}
-        <div className="flex gap-2">
-          {Array.from({ length: table.getPageCount() }).map((_, pageIndex) => (
             <button
-              key={pageIndex}
-              onClick={() => clickCustomPage(pageIndex)}
-              className={`px-3 py-1 rounded ${pageIndex === table.getState().pagination.pageIndex
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
-                }`}
+              onClick={clickPrevPage}
+              disabled={!table.getCanPreviousPage()}
+              className="p-1 bg-gray-200 rounded disabled:opacity-50"
             >
-              {pageIndex + 1}
+              <ChevronLeft />
             </button>
-          ))}
+
+            {/* Page Numbers */}
+            <div className="flex gap-2">
+              {Array.from({ length: table.getPageCount() }).map((_, pageIndex) => (
+                <button
+                  key={pageIndex}
+                  onClick={() => clickCustomPage(pageIndex)}
+                  className={`px-3 py-1 rounded ${pageIndex === table.getState().pagination.pageIndex
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                    }`}
+                >
+                  {pageIndex + 1}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={clickNextPage}
+              disabled={!table.getCanNextPage()}
+              className="p-1 bg-gray-200 rounded disabled:opacity-50"
+            >
+              <ChevronRight />
+            </button>
+          </div>
         </div>
-
-        <button
-          onClick={clickNextPage}
-          disabled={!table.getCanNextPage()}
-          className="p-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          <ChevronRight />
-        </button>
-      </div>
-      </div>
-
+      }
     </div>
   );
 }

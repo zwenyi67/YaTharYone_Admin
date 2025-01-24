@@ -6,13 +6,35 @@ import {
 } from "@tanstack/react-query";
 import axios from "axios";
 import {
-  AddMenuCategoryPayloadType,
+  AddMenuPayloadType,
   GetMenuCategoriesType,
+  GetMenusType,
   PostResponse,
-  UpdateMenuCategoryPayloadType,
+  UpdateMenuPayloadType,
 } from "./types";
 
-const menuCategory_URL = "/admin/menu-categories";
+const menu_URL = "/admin/menus";
+const menuCategory_URL = "/admin/menu-categories"
+
+export const getMenus = {
+  useQuery: (opt?: UseQueryOptions<GetMenusType[], Error>) =>
+    useQuery<GetMenusType[], Error>({
+      queryKey: ["getMenus"],
+      queryFn: async () => {
+        const response = await axios.get(`${menu_URL}`);
+
+        const { data, status, message } = response.data;
+
+        if (status !== 0) {
+          throw new Error(message);
+        }
+
+        return data;
+      },
+      throwOnError: true,
+      ...opt,
+    }),
+};
 
 export const getMenuCategories = {
   useQuery: (opt?: UseQueryOptions<GetMenuCategoriesType[], Error>) =>
@@ -34,20 +56,20 @@ export const getMenuCategories = {
     }),
 };
 
-export const addMenuCategory = {
+export const addMenu = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
       Error,
-      AddMenuCategoryPayloadType,
+      AddMenuPayloadType,
       unknown
     >
   ) => {
     return useMutation({
-      mutationKey: ["addMenuCategory"],
-      mutationFn: async (payload: AddMenuCategoryPayloadType) => {
+      mutationKey: ["addMenu"],
+      mutationFn: async (payload: AddMenuPayloadType) => {
         const response = await axios.post(
-          `${menuCategory_URL}/create`,
+          `${menu_URL}/create`,
           payload
         )
 
@@ -67,20 +89,20 @@ export const addMenuCategory = {
   },
 }
 
-export const updateMenuCategory = {
+export const updateMenu = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
       Error,
-      UpdateMenuCategoryPayloadType,
+      UpdateMenuPayloadType,
       unknown
     >
   ) => {
     return useMutation({
-      mutationKey: ["updateMenuCategory"],
-      mutationFn: async (payload: UpdateMenuCategoryPayloadType) => {
+      mutationKey: ["updateMenu"],
+      mutationFn: async (payload: UpdateMenuPayloadType) => {
         const response = await axios.post(
-          `${menuCategory_URL}/edit`,
+          `${menu_URL}/edit`,
           payload
         )
 
@@ -100,7 +122,7 @@ export const updateMenuCategory = {
   },
 }
 
-export const deleteMenuCategory = {
+export const deleteMenu = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
@@ -110,10 +132,10 @@ export const deleteMenuCategory = {
     >
   ) => {
     return useMutation({
-      mutationKey: ["deleteMenuCategory"],
+      mutationKey: ["deleteMenu"],
       mutationFn: async (id: number) => {
         const response = await axios.post(
-          `${menuCategory_URL}/${id}/delete`
+          `${menu_URL}/${id}/delete`
         );
 
         const { data, status, message } = response.data;

@@ -22,10 +22,10 @@ import EmployeeView from "@/modules/employee/EmployeeView";
 import EmployeeFormView from "@/modules/employee/EmployeeFormView";
 import TableView from "@/modules/table/TableView";
 import TableFormView from "@/modules/table/TableFormView";
-import MenuCategoryView from "@/modules/menu-category/MenuCategoryView";
-import MenuCategoryFormView from "@/modules/menu-category/MenuCategoryFormView";
-import MenuView from "@/modules/menu/MenuView";
-import MenuFormView from "@/modules/menu/MenuFormView";
+import MenuCategoryView from "@/modules/menu-management/menu-category/MenuCategoryView";
+import MenuCategoryFormView from "@/modules/menu-management/menu-category/MenuCategoryFormView";
+import MenuView from "@/modules/menu-management/menu/MenuView";
+import MenuFormView from "@/modules/menu-management/menu/MenuFormView";
 import SupplierView from "@/modules/supplier-management/supplier/SupplierView";
 import SupplierFormView from "@/modules/supplier-management/supplier/SupplierFormView";
 import PurchasesView from "@/modules/supplier-management/purchases/PurchasesView";
@@ -45,11 +45,16 @@ const router = createBrowserRouter([
         index: true,
         element: <Navigate to="/dashboard" replace />,
       },
+      // Dashboard Start
       {
         path: "dashboard",
         element: <DashboardView />,
       },
-      //Supplier Management
+      // Dashboard End
+
+      // Supplier Management Start
+
+      // Suppliers
       {
         path: "supplier-management/suppliers",
         element: <SupplierView />,
@@ -62,6 +67,7 @@ const router = createBrowserRouter([
         path: "supplier-management/suppliers/:id/edit",
         element: <SupplierFormView />,
       },
+
       // Purchasing Transcations
       {
         path: "supplier-management/purchasehistories",
@@ -75,20 +81,12 @@ const router = createBrowserRouter([
         path: "/supplier-management/purchasehistories/supplierlist/:id/create",
         element: <PurchasesFormView />,
       },
-      
-      //Inventory Management
-      {
-        path: "inventory-management/inventories",
-        element: <InventoryView />,
-      },
-      {
-        path: "inventory-management/inventories/create",
-        element: <InventoryFormView />,
-      },
-      {
-        path: "inventory-management/inventories/:id/edit",
-        element: <InventoryFormView />,
-      },
+
+      // Supplier Management End
+
+      // Inventory Management Start
+
+      // Inventory Item Category
       {
         path: "inventory-management/item-categories",
         element: <ItemCategoryView />,
@@ -101,6 +99,54 @@ const router = createBrowserRouter([
         path: "inventory-management/item-categories/:id/edit",
         element: <ItemCategoryFormView />,
       },
+
+      // Inventory
+      {
+        path: "inventory-management/inventories",
+        element: <InventoryView />,
+      },
+      {
+        path: "inventory-management/inventories/create",
+        element: <InventoryFormView />,
+      },
+      {
+        path: "inventory-management/inventories/:id/edit",
+        element: <InventoryFormView />,
+      },
+
+      // Inventory Management End
+
+      // Menu Management Start
+
+      // Menu Category
+      {
+        path: "menu-management/menu-categories",
+        element: <MenuCategoryView />,
+      },
+      {
+        path: "menu-management/menu-categories/create",
+        element: <MenuCategoryFormView />,
+      },
+      {
+        path: "menu-management/menu-categories/:id/edit",
+        element: <MenuCategoryFormView />,
+      },
+
+      // Menu
+      {
+        path: "menu-management/menus",
+        element: <MenuView />,
+      },
+      {
+        path: "menu-management/menus/create",
+        element: <MenuFormView />,
+      },
+      {
+        path: "menu-management/menus/:id/edit",
+        element: <MenuFormView />,
+      },
+
+      // Menu Management Start
 
       //Employee Management
       {

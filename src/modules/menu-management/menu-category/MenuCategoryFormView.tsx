@@ -8,10 +8,10 @@ import { CircleChevronLeft } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from "react-router-dom";
-import { AddItemCategoryPayloadType, UpdateItemCategoryPayloadType } from '@/api/item-category/types';
 import { t } from 'i18next';
-import { useDispatch } from 'react-redux';
+import { AddMenuCategoryPayloadType, UpdateMenuCategoryPayloadType } from '@/api/menu-category/types';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
+import { useDispatch } from 'react-redux';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -21,18 +21,18 @@ const formSchema = z.object({
   createby: z.number().optional(), // Assuming this is optional for the form
 });
 
-export default function ItemCategoryFormView() {
+export default function MenuCategoryFormView() {
 
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
 
   const location = useLocation();
   const { id } = useParams();
 
-  const passedData = location.state?.data;
+  const dispatch = useDispatch();
 
-  const item: AddItemCategoryPayloadType = id
+  const passedData: AddMenuCategoryPayloadType = location.state?.data;
+
+  const item: AddMenuCategoryPayloadType = id
     ? { ...passedData }
     : {
       name: "",
@@ -49,17 +49,17 @@ export default function ItemCategoryFormView() {
     },
   });
 
-  const { mutate: addItemCategory } =
-    api.itemCategory.addItemCategory.useMutation({
+  const { mutate: addMenuCategory } =
+    api.menuCategory.addMenuCategory.useMutation({
       onMutate: () => {
         dispatch(openLoader());
       },
       onSuccess: () => {
         toast({
-          title: "New Item Category added successfully",
+          title: "New Category added successfully",
           variant: "success",
         });
-        navigate("/inventory-management/item-categories");
+        navigate("/menu-management/menu-categories");
       },
       onError: (error) => {
         form.setError("name", { type: "custom", message: error.message });
@@ -73,17 +73,17 @@ export default function ItemCategoryFormView() {
       },
     });
 
-  const { mutate: updateItemCategory } =
-    api.itemCategory.updateItemCategory.useMutation({
+  const { mutate: updateMenuCategory } =
+    api.menuCategory.updateMenuCategory.useMutation({
       onMutate: () => {
         dispatch(openLoader());
       },
       onSuccess: () => {
         toast({
-          title: "Item Category updated successfully",
+          title: "Category updated successfully",
           variant: "success",
         });
-        navigate("/inventory-management/item-categories");
+        navigate("/menu-management/menu-categories");
       },
       onError: (error) => {
         form.setError("name", { type: "custom", message: error.message });
@@ -96,7 +96,6 @@ export default function ItemCategoryFormView() {
         dispatch(hideLoader());
       },
     });
-
 
   const onSubmit = async (item: z.infer<typeof formSchema>) => {
     try {
@@ -111,13 +110,13 @@ export default function ItemCategoryFormView() {
         formData.append("id", id);
 
         // Call update API
-        await updateItemCategory(formData as unknown as UpdateItemCategoryPayloadType);
+        await updateMenuCategory(formData as unknown as UpdateMenuCategoryPayloadType);
       } else {
         // For add form
         formData.append("createby", (item.createby || 1).toString());
 
         // Call add API
-        await addItemCategory(formData as unknown as AddItemCategoryPayloadType);
+        await addMenuCategory(formData as unknown as AddMenuCategoryPayloadType);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -127,17 +126,17 @@ export default function ItemCategoryFormView() {
   return (
     <section className="m-4">
       <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-        {t("title.item-category-management")}
+        {t("title.menu-category-management")}
       </div>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
-            <Link to={'/inventory-management/item-categories'}>
+            <Link to={'/menu-management/menu-categories'}>
               <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
             </Link>
           </div>
           <div className='text-base font-semibold mt-1 text-secondary'>
-            {id ? "Edit Item Category" : "Add New Item Category"}
+            {id ? "Edit Category" : "Add New Category"}
           </div>
         </div>
         <Form {...form}>
@@ -149,14 +148,15 @@ export default function ItemCategoryFormView() {
                 name="name"
                 render={({ field }) => (
                   <FormItem >
-                    <FormLabel>Item Category Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormLabel>Category Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                     <FormControl>
-                      <Input placeholder="Item Category Name" {...field} />
+                      <Input placeholder="Full Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              {/* Description */}
               <FormField
                 control={form.control}
                 name="description"

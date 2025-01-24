@@ -1,15 +1,10 @@
 {
   "common": {
-    "hello": "Hello",
     "dashboard": "Dashboard",
     "new": "New",
     "edit-detail": "Edit Detail",
     "back": "Back",
     "name": "Name",
-    "last-name": "Last Name",
-    "id-card": "ID Card",
-    "house-registration": "House Registration",
-    "cv-form": "CV Form",
     "edit": "Edit",
     "complete": "Complete",
     "address": "Address",
@@ -17,17 +12,11 @@
     "cancel": "Cancel",
     "document-upload": "Document Upload",
     "scan": "Scan",
-    "ai-progress": "AI Progress",
     "submit": "Submit",
     "select-file": "Select File",
     "approve": "Approve",
-    "interview-profile": "Interview Profile",
-    "total-score": "Total Score",
     "questions": "Questions",
     "answers": "Answers",
-    "score": "Score",
-    "interviewer-name": "Interviewer Name",
-    "interview-score": "Interview Score",
     "accept": "Accept",
     "reject": "Reject",
     "no-file-selected": "No File Selected",
@@ -57,9 +46,11 @@
     "item-category-management": "Item Category Management",
     "inventory": "Inventory",
     "item-category": "Item Category",
+    "menu": "Menu",
+    "menu-category": "Menu Categroy",
     "employee-management": "Employee Management",
     "table-management": "Table Management",
-    "category-management": "Category Management",
+    "menu-category-management": "Menu Category Management",
     "menu-management": "Menu Management",
     "menuitem-addon-management": "Item Add on"
   },
@@ -73,13 +64,6 @@
       "number": "Number"
     },
     "actions": "Actions",
-    "employee-management": {
-      "number": "No",
-      "fullname": "Fullname",
-      "email": "Email",
-      "phone": "Phone",
-      "profile": "Profile"
-    },
     "supplier-management": {
       "suppliers": {
         "number": "No",
@@ -87,7 +71,7 @@
         "email": "Email",
         "phone": "Phone",
         "profile": "Profile"
-      }, 
+      },
       "purchases": {
         "number": "No",
         "supplier": "Supplier",
@@ -106,11 +90,32 @@
         "min_stock_level": "Min Stock Level",
         "reorder_level": "Reorder Level"
       },
-        "item-category": {
-          "number": "No",
-          "name": "Item Name",
-          "description": "Description"
-        }
+      "item-category": {
+        "number": "No",
+        "name": "Item Name",
+        "description": "Description"
+      }
+    },
+    "menu-management": {
+      "menu": {
+        "number": "No",
+        "name": "Menu Name",
+        "profile": "Image",
+        "price": "Price",
+        "category": "Category"
+      },
+      "menu-category": {
+        "number": "No",
+        "name": "Category Name",
+        "description": "Description"
+      }
+    },
+    "employee-management": {
+      "number": "No",
+      "fullname": "Fullname",
+      "email": "Email",
+      "phone": "Phone",
+      "profile": "Profile"
     },
     "table-management": {
       "number": "No",
@@ -119,6 +124,8 @@
     },
     "sd": {}
   },
+
+
   "success-title": {
     "login": "You logged in with the following email:",
     "add": "Addition successful",

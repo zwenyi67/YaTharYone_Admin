@@ -12,7 +12,7 @@ const PurchasesView = () => {
 			<div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
 				{t("title.purchasing-transactions")}
 			</div>
-			<div className="p-6 bg-white rounded-lg">
+			<div className="p-6 bg-white rounded-b-lg">
 				<TableUI
 					data={data}
 					columns={columns}

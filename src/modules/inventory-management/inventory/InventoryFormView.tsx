@@ -12,6 +12,8 @@ import { AddInventoryPayloadType, GetItemCategoriesType, UpdateInventoryPayloadT
 import { t } from 'i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DatePicker from '@/components/ui/datepicker';
+import { useDispatch } from 'react-redux';
+import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -71,6 +73,8 @@ export default function InventoryFormView() {
 
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
   const { data, isFetching } = api.inventory.getItemCategories.useQuery();
 
   const location = useLocation();
@@ -111,6 +115,9 @@ export default function InventoryFormView() {
 
   const { mutate: addInventory } =
     api.inventory.addInventory.useMutation({
+      onMutate: () => {
+        dispatch(openLoader());
+      },
       onSuccess: () => {
         toast({
           title: "New Inventory added successfully",
@@ -125,10 +132,16 @@ export default function InventoryFormView() {
           variant: "destructive",
         });
       },
+      onSettled: () => {
+        dispatch(hideLoader());
+      },
     });
 
   const { mutate: updateInventory } =
     api.inventory.updateInventory.useMutation({
+      onMutate: () => {
+        dispatch(openLoader());
+      },
       onSuccess: () => {
         toast({
           title: "Inventory updated successfully",
@@ -142,6 +155,9 @@ export default function InventoryFormView() {
           title: error.message,
           variant: "destructive",
         });
+      },
+      onSettled: () => {
+        dispatch(hideLoader());
       },
     });
 

@@ -12,7 +12,7 @@ import { format } from "date-fns";
 import DatePicker from '@/components/ui/datepicker';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
-
+import { t } from 'i18next';
 
 const formSchema = z.object({
   employee_id: z.string().nonempty({
@@ -229,14 +229,17 @@ export default function EmployeeFormView() {
 
   return (
     <section className="m-4">
+      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
+        {t("title.employee-management")}
+      </div>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-5'>
           <div className='me-5'>
             <Link to={'/employee-management'}>
-              <CircleChevronLeft />
+              <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500'/>
             </Link>
           </div>
-          <div>
+          <div className='text-base font-semibold mt-1 text-secondary'>
             {id ? "Edit Employee" : "Add New Employee"}
           </div>
         </div>

@@ -6,23 +6,23 @@ import { useState } from "react"
 import api from '@/api';
 import { toast } from "@/hooks/use-toast"
 import { useQueryClient } from "@tanstack/react-query"
-import { GetInventoriesType } from "@/api/inventory/types"
+import { GetMenusType } from "@/api/menu/types"
 
-const ManageColumn = ({ data }: { data: GetInventoriesType }) => {
+const ManageColumn = ({ data }: { data: GetMenusType }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isDetailOpen, setIsDetailOpen] = useState(false);
 	const queryClient = useQueryClient();
 
 
-	const { mutate: deleteInventory } = api.inventory.deleteInventory.useMutation({
+	const { mutate: deleteMenu } = api.menu.deleteMenu.useMutation({
 		onSuccess: () => {
 			toast({
-				title: "Inventory Deleted successfully",
+				title: "Menu Deleted successfully",
 				variant: "success",
 			});
 
 			queryClient.invalidateQueries({
-				queryKey: ["getInventories"],
+				queryKey: ["getmenus"],
 			});
 		},
 		onError: (error) => {
@@ -35,7 +35,7 @@ const ManageColumn = ({ data }: { data: GetInventoriesType }) => {
 	});
 
 	const handleDelete = (id: number) => {
-		deleteInventory(id);
+		deleteMenu(id);
 		setIsDialogOpen(false);
 	};
 
@@ -45,7 +45,7 @@ const ManageColumn = ({ data }: { data: GetInventoriesType }) => {
 				<Info color="blue" />
 			</Button>
 			<Button variant={"columnIcon"} size={"icon"}>
-				<Link to={`/inventory-management/inventories/${data.id}/edit`} state={{ data }}>
+				<Link to={`/menu-management/menus/${data.id}/edit`} state={{ data }}>
 					<Pencil2Icon color="green" />
 				</Link>
 			</Button>
@@ -80,7 +80,7 @@ const ManageColumn = ({ data }: { data: GetInventoriesType }) => {
 					<div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 scale-100 hover:scale-105">
 						<div className="flex items-center justify-between mb-4">
 							<h2 className="text-xl font-bold text-gray-800">
-								Inventory Details
+								Menu Details
 							</h2>
 							<button
 								onClick={() => setIsDetailOpen(false)}
@@ -90,10 +90,6 @@ const ManageColumn = ({ data }: { data: GetInventoriesType }) => {
 							</button>
 						</div>
 						{/* <div className="space-y-3 text-gray-700">
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Inventory Name:</span>
-								<span>{data.name}</span>
-							</div>
 							<div className="flex items-center space-x-2">
 								<span className="font-medium">Contact Person:</span>
 								<span>{data.contact_person}</span>

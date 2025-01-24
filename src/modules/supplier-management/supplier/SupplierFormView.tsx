@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { AddSupplierPayloadType, UpdateSupplierPayloadType } from '@/api/supplier/types';
 import { t } from 'i18next';
+import { hideLoader, openLoader } from '@/store/features/loaderSlice';
+import { useDispatch } from 'react-redux';
 
 
 const formSchema = z.object({
@@ -18,25 +20,25 @@ const formSchema = z.object({
     message: "Supplier name must be at least 2 characters.",
   }),
   profile: z
-  .union([
-    z.string().optional(),
-    z
-      .instanceof(File)
-      .refine(
-        (file) =>
-          ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
-        {
-          message: "Only PNG, JPG, or JPEG files are allowed.",
-        }
-      ),
-  ])
-  .optional(),
-    contact_person: z.string().min(3, {
-      message: "Contact Person must be at least 3 characters.",
-    }),
-    business_type: z.string().min(3, {
-      message: "Business Type must be at least 3 characters.",
-    }),
+    .union([
+      z.string().optional(),
+      z
+        .instanceof(File)
+        .refine(
+          (file) =>
+            ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
+          {
+            message: "Only PNG, JPG, or JPEG files are allowed.",
+          }
+        ),
+    ])
+    .optional(),
+  contact_person: z.string().min(3, {
+    message: "Contact Person must be at least 3 characters.",
+  }),
+  business_type: z.string().min(3, {
+    message: "Business Type must be at least 3 characters.",
+  }),
   phone: z.string().min(10, {
     message: "Phone number must be at least 10 digits.",
   }),
@@ -53,9 +55,10 @@ export default function SupplierFormView() {
 
   const navigate = useNavigate();
 
-
   const location = useLocation();
   const { id } = useParams();
+
+  const dispatch = useDispatch();
 
   const passedData = location.state?.data;
 
@@ -88,6 +91,9 @@ export default function SupplierFormView() {
 
   const { mutate: addSupplier } =
     api.supplier.addSupplier.useMutation({
+      onMutate: () => {
+        dispatch(openLoader());
+      },
       onSuccess: () => {
         toast({
           title: "New Supplier added successfully",
@@ -102,11 +108,16 @@ export default function SupplierFormView() {
           variant: "destructive",
         });
       },
+      onSettled: () => {
+        dispatch(hideLoader());
+      },
     });
 
   const { mutate: updateSupplier } =
     api.supplier.updateSupplier.useMutation({
-      onSuccess: () => {
+      onMutate: () => {
+        dispatch(openLoader());
+      }, onSuccess: () => {
         toast({
           title: "Supplier updated successfully",
           variant: "success",
@@ -119,6 +130,9 @@ export default function SupplierFormView() {
           title: error.message,
           variant: "destructive",
         });
+      },
+      onSettled: () => {
+        dispatch(hideLoader());
       },
     });
 
@@ -196,13 +210,13 @@ export default function SupplierFormView() {
   return (
     <section className="m-4">
       <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-            {t("title.supplier-management")}
-            </div>
+        {t("title.supplier-management")}
+      </div>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
             <Link to={'/supplier-management/suppliers'}>
-              <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500'/>
+              <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
             </Link>
           </div>
           <div className='text-base font-semibold mt-1 text-secondary'>
@@ -243,7 +257,7 @@ export default function SupplierFormView() {
                     <FormControl>
                       <Input placeholder="Full Name" {...field} />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -257,39 +271,39 @@ export default function SupplierFormView() {
                     <FormControl>
                       <Input placeholder="Contact Person" {...field} />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
               {/* Phone */}
               <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                      <FormControl>
-                        <Input placeholder="Phone Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Phone Number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               {/* Email */}
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                      <FormControl>
-                        <Input placeholder="Email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* Business Type */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Business Type */}
               <FormField
                 control={form.control}
                 name="business_type"
@@ -299,28 +313,28 @@ export default function SupplierFormView() {
                     <FormControl>
                       <Input placeholder="Business Type" {...field} />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
               {/* Address */}
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem >
-                      <FormLabel>Address <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                      <FormControl>
-                        <Input placeholder="Address" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem >
+                    <FormLabel>Address <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <div>
               <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-7">
-              {id ? "Update" : "Save"}
+                {id ? "Update" : "Save"}
               </button>
             </div>
           </form>

@@ -14,6 +14,9 @@ import { AddPurchaseItemPayloadType, ConfirmPurchaseItemsPayloadType, GetItemTyp
 import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { t } from "i18next"
+import { useDispatch } from 'react-redux';
+import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 
 
 const formSchema = z.object({
@@ -56,7 +59,7 @@ export default function PurchasesFormView() {
 
   const navigate = useNavigate();
 
-    const { id : supplier_id } = useParams();
+  const { id: supplier_id } = useParams();
 
   const item: AddPurchaseItemPayloadType = {
     item_category_id: "",
@@ -94,6 +97,7 @@ export default function PurchasesFormView() {
 
   const [purchases, SetPurchases] = useState<AddPurchaseItemPayloadType[]>([]);
 
+  const dispatch = useDispatch();
 
   const onSubmit = async (item: z.infer<typeof formSchema>) => {
     try {
@@ -150,7 +154,9 @@ export default function PurchasesFormView() {
 
   const { mutate: confirmPurchases } =
     api.purchaseItem.confirmPurchases.useMutation({
-      onSuccess: () => {
+      onMutate: () => {
+        dispatch(openLoader());
+      }, onSuccess: () => {
         toast({
           title: "New Purchase Transaction added successfully",
           variant: "success",
@@ -163,6 +169,9 @@ export default function PurchasesFormView() {
           title: error.message,
           variant: "destructive",
         });
+      },
+      onSettled: () => {
+        dispatch(hideLoader());
       },
     });
 
@@ -183,10 +192,13 @@ export default function PurchasesFormView() {
 
   return (
     <section className="m-4">
+      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
+        {t("title.purchasing-transactions")}
+      </div>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
-            <Link to={'/supplier-management/purchasehistories'}>
+            <Link to={'/supplier-management/purchasehistories/supplierlist'}>
               <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
             </Link>
           </div>
@@ -239,7 +251,7 @@ export default function PurchasesFormView() {
                           onValueChange={(value) => field.onChange(value)} defaultValue={field.value}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={isItemFetching ? 'Loading' : ''} />
+                            <SelectValue placeholder={isItemFetching ? 'Loading' : 'Select Item'} />
                           </SelectTrigger>
                           <SelectContent>
                             {items?.map((item: GetItemType) => (

@@ -2,14 +2,14 @@ import TableHeaderCell from "@/components/table/TableHeaderCell";
 import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import ManageColumn from "./ManageColumn";
-import { GetInventoriesType } from "@/api/inventory/types";
+import { GetMenuCategoriesType } from "@/api/menu-category/types";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-const baseIndex = 'fields.inventory-management.inventory'
+const baseIndex = 'fields.menu-management.menu-category'
 
-export const columns: ColumnDef<GetInventoriesType>[] = [
+export const columns: ColumnDef<GetMenuCategoriesType>[] = [
   {
     accessorKey: "number",
     header: () => <TableHeaderCell>{`${baseIndex}.number`}</TableHeaderCell>,
@@ -29,24 +29,10 @@ export const columns: ColumnDef<GetInventoriesType>[] = [
     filterFn: "includesString",
   },
   {
-    accessorKey: "current_stock",
-    header: () => <TableHeaderCell>{`${baseIndex}.current_stock`}</TableHeaderCell>,
+    accessorKey: "description",
+    header: () => <TableHeaderCell>{`${baseIndex}.description`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.current_stock} {row.original.unit_of_measure}</div>;
-    },
-  },
-  {
-    accessorKey: "min_stock_level",
-    header: () => <TableHeaderCell>{`${baseIndex}.min_stock_level`}</TableHeaderCell>,
-    cell: ({ row }) => {
-      return <div>{row.original.min_stock_level}</div>;
-    },
-  },
-  {
-    accessorKey: "reorder_level",
-    header: () => <TableHeaderCell>{`${baseIndex}.reorder_level`}</TableHeaderCell>,
-    cell: ({ row }) => {
-      return <div>{row.original.reorder_level}</div>;
+      return <div>{row.original.description}</div>;
     },
   },
   {

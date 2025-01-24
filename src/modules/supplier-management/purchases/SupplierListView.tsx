@@ -1,7 +1,8 @@
 import api from "@/api"
 import { GetSuppliersType } from "@/api/supplier/types"
 import { t } from "i18next"
-import { useNavigate } from "react-router-dom"
+import { CircleChevronLeft } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
 
 const SupplierListView = () => {
 
@@ -19,6 +20,16 @@ const SupplierListView = () => {
             </div>
 
             <div className="p-6 bg-white rounded-lg">
+                <div className='flex mb-8'>
+                    <div className='me-5'>
+                        <Link to={'/supplier-management/purchasehistories'}>
+                            <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
+                        </Link>
+                    </div>
+                    <div className='text-base font-semibold mt-1 text-secondary'>
+                        Supplier List
+                    </div>
+                </div>
                 <div className="grid grid-cols-4 gap-4 mt-4">
                     {isFetching ? (
                         <div className="col-span-4 text-center text-gray-500">Loading...</div>
