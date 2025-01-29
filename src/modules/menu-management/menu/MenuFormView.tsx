@@ -468,7 +468,6 @@ export default function MenuFormView() {
                 </div>
               </div>
             </div>
-
             <div>
               <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-7">
                 {id ? "Update" : "Save"}

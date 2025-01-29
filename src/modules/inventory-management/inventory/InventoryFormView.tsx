@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { AddInventoryPayloadType, GetItemCategoriesType, UpdateInventoryPayloadType } from '@/api/inventory/types';
 import { t } from 'i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import DatePicker from '@/components/ui/datepicker';
 import { useDispatch } from 'react-redux';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 
@@ -31,8 +30,8 @@ const formSchema = z.object({
         required_error: "Current Stock is required.",
       }).regex(/^\d+(\.\d+)?$/, "Current Stock must be a positive number or decimal string."),
     ])
-    .refine((value) => Number(value) > 0, {
-      message: "Current Stock must be a positive number.",
+    .refine((value) => Number(value) >= 0, {
+      message: "Current Stock must be zero or a positive number.",
     }),
   min_stock_level: z
     .union([
@@ -43,8 +42,8 @@ const formSchema = z.object({
         required_error: "Min Stock Level is required.",
       }).regex(/^\d+(\.\d+)?$/, "Min Stock Level must be a positive number or decimal string."),
     ])
-    .refine((value) => Number(value) > 0, {
-      message: "Min Stock Level must be a positive number.",
+    .refine((value) => Number(value) >= 0, {
+      message: "Min Stock Level must be zero or a positive number.",
     }),
   reorder_level: z
     .union([
@@ -55,13 +54,21 @@ const formSchema = z.object({
         required_error: "Reorder Level is required.",
       }).regex(/^\d+(\.\d+)?$/, "Reorder Level must be a positive number or decimal string."),
     ])
-    .refine((value) => Number(value) > 0, {
-      message: "Reorder Level must be a positive number.",
+    .refine((value) => Number(value) >= 0, {
+      message: "Reorder Level must be zero or a positive number.",
     }),
-  is_perishable: z.boolean().optional(),
-  expiry_date: z.date({
-    required_error: "Expiry date is required.",
-  }),
+  expiry_period_inDay: z
+    .union([
+      z.number({
+        required_error: "Reorder Level is required.",
+      }),
+      z.string({
+        required_error: "Reorder Level is required.",
+      }).regex(/^\d+(\.\d+)?$/, "Reorder Level must be a positive number or decimal string."),
+    ])
+    .refine((value) => Number(value) >= 0, {
+      message: "Reorder Level must be zero or a positive number.",
+    }),
   item_category_id: z.string().min(1, {
     message: "Item Category is required.",
   }),
@@ -90,8 +97,7 @@ export default function InventoryFormView() {
       current_stock: 0,
       min_stock_level: 0,
       reorder_level: 0,
-      is_perishable: false,
-      expiry_date: null,
+      expiry_period_inDay: 0,
       item_category_id: "",
       description: "",
       createby: 1,
@@ -105,9 +111,8 @@ export default function InventoryFormView() {
       current_stock: item?.current_stock || 0,
       min_stock_level: item?.min_stock_level || 0,
       reorder_level: item?.reorder_level || 0,
-      is_perishable: item?.is_perishable || false,
+      expiry_period_inDay: item?.expiry_period_inDay || 0,
       item_category_id: item?.item_category_id.toString() || "",
-      expiry_date: item?.expiry_date ? new Date(item.expiry_date) : undefined,
       description: item?.description || "",
       createby: item?.createby || 1,
     },
@@ -169,8 +174,7 @@ export default function InventoryFormView() {
       formData.append("unit_of_measure", item.unit_of_measure.toString());
       formData.append("current_stock", item.current_stock.toString());
       formData.append("min_stock_level", item.min_stock_level.toString());
-      formData.append("is_perishable", item.is_perishable ? '1' : '0');
-      formData.append("expiry_date", item.expiry_date.toISOString().split("T")[0]);
+      formData.append("expiry_period_inDay", item.expiry_period_inDay.toString());
       formData.append("item_category_id", item.item_category_id.toString());
       formData.append("reorder_level", item.reorder_level.toString());
       formData.append("description", item.description || '');
@@ -212,7 +216,7 @@ export default function InventoryFormView() {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className='grid grid-cols-2 gap-6 mt-5'>
+            <div className='grid grid-cols-2 gap-5 mt-5'>
               {/* Full Name */}
               <FormField
                 control={form.control}
@@ -334,20 +338,41 @@ export default function InventoryFormView() {
                   </FormItem>
                 )}
               />
-              {/* Expiry Date */}
+              {/* expiry_period_inDay */}
               <FormField
                 control={form.control}
-                name="expiry_date"
+                name="expiry_period_inDay"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Expiry Date <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormLabel>Expiry Period (in day) <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                     <FormControl>
-                      <DatePicker value={field.value} onChange={(date) => field.onChange(date)} />
+                      <Input
+                        value={form.getValues("expiry_period_inDay")}
+                        type="number"
+                        placeholder="Expiry Period"
+                        onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              {/* is Perishable */}
+              {/* <FormField
+                control={form.control}
+                name="is_perishable"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='block'>Is Perishable</FormLabel>
+                    <FormControl>
+                      <Switch
+                        className=''
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              /> */}
               {/* Description */}
               <FormField
                 control={form.control}

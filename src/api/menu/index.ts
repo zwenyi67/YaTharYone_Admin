@@ -7,6 +7,7 @@ import {
 import axios from "axios";
 import {
   AddMenuPayloadType,
+  AddonItemPayloadType,
   GetMenuCategoriesType,
   GetMenusType,
   PostResponse,
@@ -152,5 +153,38 @@ export const deleteMenu = {
     });
   },
 };
+
+export const addonItem = {
+  useMutation: (
+    opt?: UseMutationOptions<
+      PostResponse,
+      Error,
+      AddonItemPayloadType,
+      unknown
+    >
+  ) => {
+    return useMutation({
+      mutationKey: ["addonItem"],
+      mutationFn: async (payload: AddonItemPayloadType) => {
+        const response = await axios.post(
+          `${menu_URL}/addonItem`,
+          payload
+        )
+
+        const { data, status, message } = response.data
+
+        if (status !== 0) {
+          throw new Error(
+            message ||
+            "An error occurred while processing the request."
+          )
+        }
+
+        return data
+      },
+      ...opt,
+    })
+  },
+}
 
 

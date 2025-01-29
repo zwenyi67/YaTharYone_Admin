@@ -29,6 +29,14 @@ export const columns: ColumnDef<GetInventoriesType>[] = [
     filterFn: "includesString",
   },
   {
+    accessorKey: "category",
+    header: () => <TableHeaderCell>{`${baseIndex}.category`}</TableHeaderCell>,
+    cell: ({ row }) => {
+      return <div>{row.original.inventory_item_category.name}</div>;
+    },
+    filterFn: "includesString",
+  },
+  {
     accessorKey: "current_stock",
     header: () => <TableHeaderCell>{`${baseIndex}.current_stock`}</TableHeaderCell>,
     cell: ({ row }) => {
@@ -39,14 +47,21 @@ export const columns: ColumnDef<GetInventoriesType>[] = [
     accessorKey: "min_stock_level",
     header: () => <TableHeaderCell>{`${baseIndex}.min_stock_level`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.min_stock_level}</div>;
+      return <div>{row.original.min_stock_level} {row.original.unit_of_measure}</div>;
     },
   },
   {
     accessorKey: "reorder_level",
     header: () => <TableHeaderCell>{`${baseIndex}.reorder_level`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.reorder_level}</div>;
+      return <div>{row.original.reorder_level} {row.original.unit_of_measure}</div>;
+    },
+  },
+  {
+    accessorKey: "expiry_period_inDay",
+    header: () => <TableHeaderCell>{`${baseIndex}.expiry_period_inDay`}</TableHeaderCell>,
+    cell: ({ row }) => {
+      return <div>{row.original.expiry_period_inDay}</div>;
     },
   },
   {

@@ -77,7 +77,7 @@ const ManageColumn = ({ data }: { data: GetInventoriesType }) => {
 			{/* Detail Dialog Box */}
 			{isDetailOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-					<div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 scale-100 hover:scale-105">
+					<div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
 						<div className="flex items-center justify-between mb-4">
 							<h2 className="text-xl font-bold text-gray-800">
 								Inventory Details
@@ -89,32 +89,32 @@ const ManageColumn = ({ data }: { data: GetInventoriesType }) => {
 								✕
 							</button>
 						</div>
-						{/* <div className="space-y-3 text-gray-700">
+						<div className="space-y-3 text-gray-700">
 							<div className="flex items-center space-x-2">
-								<span className="font-medium">Inventory Name:</span>
+								<span className="font-medium">Item Name :</span>
 								<span>{data.name}</span>
 							</div>
 							<div className="flex items-center space-x-2">
-								<span className="font-medium">Contact Person:</span>
-								<span>{data.contact_person}</span>
+								<span className="font-medium">Item Category :</span>
+								<span>{data.inventory_item_category.name}</span>
 							</div>
 							<div className="flex items-center space-x-2">
-								<span className="font-medium">Email:</span>
-								<span className="text-blue-600 underline">{data.email}</span>
+								<span className="font-medium">Current Stock :</span>
+								<span>{data.current_stock} {data.unit_of_measure}</span>
 							</div>
 							<div className="flex items-center space-x-2">
-								<span className="font-medium">Phone:</span>
-								<span>{data.phone}</span>
+								<span className="font-medium">Min Stock Level :</span>
+								<span>{data.min_stock_level} {data.unit_of_measure}</span>
 							</div>
 							<div className="flex items-center space-x-2">
-								<span className="font-medium">Address:</span>
-								<span>{data.address}</span>
+								<span className="font-medium">Reorder Level :</span>
+								<span>{data.reorder_level} {data.unit_of_measure}</span>
 							</div>
 							<div className="flex items-center space-x-2">
-								<span className="font-medium">Business Type:</span>
-								<span>{data.business_type}</span>
+								<span className="font-medium">Expiry Date (days):</span>
+								<span>{data.expiry_period_inDay}</span>
 							</div>
-						</div> */}
+						</div>
 						<div className="mt-6 flex justify-center space-x-4">
 							<Button
 								variant="secondary"

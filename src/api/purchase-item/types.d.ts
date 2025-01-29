@@ -27,13 +27,14 @@ export interface PurchaseDetailsType {
   id: string | number;
   item_id: string | number;
   quantity: number;
-  unit_cost: number;
+  total_cost: number;
   item : ItemType; 
 }
 
 export interface ItemType {
   id: string | number;
   name: string;
+  unit_of_measure: string;
 }
 
 export interface AddPurchaseItemPayloadType {
@@ -41,7 +42,7 @@ export interface AddPurchaseItemPayloadType {
   item_name: string;
   unit_of_measure: string;
   item_category_id: number | string;
-  unit_cost: number | any;
+  total_cost: number | any;
   quantity: number | any;
 }
 

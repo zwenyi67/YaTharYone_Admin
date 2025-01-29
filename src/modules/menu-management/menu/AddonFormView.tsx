@@ -3,20 +3,21 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { CircleChevronLeft } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { GetItemCategoriesType } from '@/api/inventory/types';
-import { AddPurchaseItemPayloadType, ConfirmPurchaseItemsPayloadType, GetItemType } from '@/api/purchase-item/types';
+import { AddPurchaseItemPayloadType, GetItemType } from '@/api/purchase-item/types';
 import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { t } from "i18next"
 import { useDispatch } from 'react-redux';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
+import { AddonItemPayloadType, AddonItems } from '@/api/menu/types';
 
 
 const formSchema = z.object({
@@ -55,11 +56,20 @@ const formSchema = z.object({
     }, { message: "Quantity must be greater than 0." }),
 });
 
-export default function PurchasesFormView() {
+export default function AddonFormView() {
 
   const navigate = useNavigate();
 
-  const { id: supplier_id } = useParams();
+  const { id: menu_id } = useParams();
+
+  const location = useLocation();
+  const addonsData = location.state?.data.addon_items;
+
+  const [addons, setAddons] = useState<AddonItems[]>([]);
+
+  useEffect(() => {
+    setAddons(addonsData);
+  }, [addonsData]);
 
   const dispatch = useDispatch();
 
@@ -97,22 +107,18 @@ export default function PurchasesFormView() {
 
   const { data: items, isFetching: isItemFetching } = api.purchaseItem.getItems.useQuery(itemCategoryId);
 
-  const [purchases, SetPurchases] = useState<AddPurchaseItemPayloadType[]>([]);
-
-
   const onSubmit = async (item: z.infer<typeof formSchema>) => {
     try {
       const [id, name, unit] = (item.item_id as string).split(',');
-      const newPurchaseItem: AddPurchaseItemPayloadType = {
-        item_id: id.trim(), // or parseInt(id.trim()) if id is numeric
-        item_name: name.trim(),
+      const newAddonItem: AddonItems = {
+        id: Number(id.trim()),
+        name: name.trim(),
         unit_of_measure: unit.trim(),
-        item_category_id: item.item_category_id,
-        total_cost: item.total_cost,
+        additional_price: item.total_cost,
         quantity: item.quantity,
       };
-      SetPurchases((prevPurchases: AddPurchaseItemPayloadType[]) => {
-        const existingItemIndex = prevPurchases.findIndex((p) => p.item_id === newPurchaseItem.item_id);
+      setAddons((prevAddons: AddonItems[]) => {
+        const existingItemIndex = prevAddons.findIndex((p) => p.id === newAddonItem.id);
 
         if (existingItemIndex !== -1) {
           // Item exists, show toast
@@ -120,11 +126,10 @@ export default function PurchasesFormView() {
             title: "Item already exist in list.",
             variant: "destructive",
           });
-          return prevPurchases;
+          return prevAddons;
         }
 
-        // Item does not exist, add as a new purchase
-        return [...prevPurchases, newPurchaseItem];
+        return [...prevAddons, newAddonItem];
       });
       form.reset({
         item_category_id: "",
@@ -137,9 +142,9 @@ export default function PurchasesFormView() {
     }
   };
 
-  const removeItem = (purchase: AddPurchaseItemPayloadType) => {
-    SetPurchases((prevPurchases: AddPurchaseItemPayloadType[]) =>
-      prevPurchases.filter((item) => item.item_id !== purchase.item_id)
+  const removeItem = (addon: AddonItems) => {
+    setAddons((prevAddons: AddonItems[]) =>
+      prevAddons.filter((item) => item.id !== addon.id)
     );
   };
 
@@ -149,19 +154,16 @@ export default function PurchasesFormView() {
     }
   }, [itemCategoryId, form]);
 
-  useEffect(() => {
-  }, [purchases]);
-
-  const { mutate: confirmPurchases } =
-    api.purchaseItem.confirmPurchases.useMutation({
+  const { mutate: addonItem } =
+    api.menu.addonItem.useMutation({
       onMutate: () => {
         dispatch(openLoader());
       }, onSuccess: () => {
         toast({
-          title: "New Purchase Transaction added successfully",
+          title: "Add on Items Updated successfully",
           variant: "success",
         });
-        navigate("/supplier-management/purchasehistories");
+        navigate("/menu-management/menus");
       },
       onError: (error) => {
         //form.setError("name", { type: "custom", message: error.message });
@@ -177,32 +179,29 @@ export default function PurchasesFormView() {
 
   const confirmPurchase = () => {
     const payload = {
-      purchase_items: purchases,
-      supplier_id: supplier_id,
-      total_amount: 1000,
-      purchase_note: "Hello purchase",
+      menu_id: menu_id,
+      addon_items: addons,
+      createby: 1,
     }
-    confirmPurchases(payload as ConfirmPurchaseItemsPayloadType);
+    addonItem(payload as AddonItemPayloadType);
   }
 
-  const cancelPurchase = () => {
-    SetPurchases([]);
-  }
+
 
   return (
     <section className="m-4">
       <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-        {t("title.purchasing-transactions")}
+        {t("title.menu-management")}
       </div>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
-            <Link to={'/supplier-management/purchasehistories/supplierlist'}>
+            <Link to={'/menu-management/menus'}>
               <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
             </Link>
           </div>
           <div className='text-base font-semibold mt-1 text-secondary'>
-            Purchsing Item List
+            Menu Addon Item List
           </div>
         </div>
         <Form {...form}>
@@ -295,7 +294,7 @@ export default function PurchasesFormView() {
                   name="total_cost"
                   render={({ field }) => (
                     <FormItem >
-                      <FormLabel>Total Cost <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                      <FormLabel>Additional Price <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                       <FormControl>
                         <Input type='number' placeholder='0' {...field}
                           onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))} />
@@ -308,7 +307,7 @@ export default function PurchasesFormView() {
             </div>
             <div>
               <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-5">
-                Submit
+                Add
               </button>
             </div>
           </form>
@@ -323,20 +322,33 @@ export default function PurchasesFormView() {
                 <TableHead >No</TableHead>
                 <TableHead>Item Name</TableHead>
                 <TableHead>Quantity</TableHead>
-                <TableHead>Total Cost</TableHead>
+                <TableHead>Additional Price</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {purchases.length > 0 ? (
-                purchases.map((purchase, index) => (
-                    <TableRow key={purchase.item_id}>
-                      <TableCell><button onClick={() => removeItem(purchase)} className='bg-primary hover:bg-red-500 rounded-full p-1 text-white'><Cross2Icon className='h-3 w-3' /></button></TableCell>
+              {addons.length > 0 ? (
+                <>
+                  {addons.map((item: AddonItems, index: number) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <button onClick={() => removeItem(item)} className='bg-primary hover:bg-red-500 rounded-full p-1 text-white'>
+                          <Cross2Icon className='h-3 w-3' />
+                        </button>
+                      </TableCell>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{purchase.item_name}</TableCell>
-                      <TableCell>{purchase.quantity} {purchase.unit_of_measure}</TableCell>
-                      <TableCell>${purchase.total_cost}</TableCell>
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell>{item.quantity} {item.unit_of_measure}</TableCell>
+                      <TableCell>${item.additional_price}</TableCell>
                     </TableRow>
-                ))
+                  ))}
+
+                  {/* ✅ Wrap these rows inside the same fragment */}
+                  <TableRow>
+                    <TableCell>
+                      <button onClick={confirmPurchase} className='bg-secondary hover:bg-blue-500 text-white p-2 px-4 rounded-sm'>Confirm</button>
+                    </TableCell>
+                  </TableRow>
+                </>
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} className="h-24 text-center">
@@ -345,24 +357,6 @@ export default function PurchasesFormView() {
                 </TableRow>
               )}
 
-              {purchases.length > 0 && (
-                <>
-                  <TableRow>
-                    <TableCell colSpan={4}>Total Amount</TableCell>
-                    <TableCell>
-                      ${purchases.reduce((total, purchase) => total + (purchase.total_cost), 0).toFixed(2)}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <button onClick={cancelPurchase} className='bg-primary hover:bg-red-500 text-white p-2 px-4 rounded-sm'>Cancel</button>
-                    </TableCell>
-                    <TableCell>
-                      <button onClick={confirmPurchase} className='bg-secondary hover:bg-blue-500 text-white p-2 px-4 rounded-sm'>Confirm</button>
-                    </TableCell>
-                  </TableRow>
-                </>
-              )}
 
             </TableBody>
           </Table>

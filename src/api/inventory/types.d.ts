@@ -7,10 +7,14 @@ export interface GetInventoriesType extends TimeStamps {
   current_stock: number;
   reorder_level: number;
   min_stock_level: number;
-  is_perishable: boolean;
-  expiry_date: date;
+  expiry_period_inDay: number;
   item_category_id: number;
   description: string;
+  inventory_item_category: InventoryItemCategory
+}
+export interface InventoryItemCategory {
+  id: number;
+  name: string;
 }
 
 export interface AddInventoryPayloadType {
@@ -19,8 +23,7 @@ export interface AddInventoryPayloadType {
   current_stock: number;
   reorder_level: number;
   min_stock_level: number;
-  is_perishable: boolean;
-  expiry_date: date;
+  expiry_period_inDay: number;
   item_category_id: number | string;
   description: string;
   createby?: number;
@@ -33,8 +36,7 @@ export interface UpdateInventoryPayloadType {
   current_stock: number;
   reorder_level: number;
   min_stock_level: number;
-  is_perishable: boolean;
-  expiry_date: date;
+  expiry_period_inDay: number;
   item_category_id: number | string;
   description: string;
   updateby?: number;

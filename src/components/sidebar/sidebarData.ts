@@ -18,23 +18,6 @@ export const sidebarData = [
   },
   {
     routeNames: [""],
-    name: "title.supplier-management",
-    icon: Store,
-    subMenu: [
-      {
-        routeNames: ["/supplier-management/suppliers"],
-        name: "title.suppliers",
-        icon: Store,
-      },
-      {
-        routeNames: ["/supplier-management/purchasehistories"],
-        name: "title.purchases",
-        icon: ArrowRightLeft,
-      },
-    ],
-  },
-  {
-    routeNames: [""],
     name: "title.inventory-management",
     icon: BoxIcon,
     subMenu: [
@@ -47,6 +30,23 @@ export const sidebarData = [
         routeNames: ["/inventory-management/inventories"],
         name: "title.inventory",
         icon: BoxIcon,
+      },
+    ],
+  },
+  {
+    routeNames: [""],
+    name: "title.supplier-management",
+    icon: Store,
+    subMenu: [
+      {
+        routeNames: ["/supplier-management/suppliers"],
+        name: "title.suppliers",
+        icon: Store,
+      },
+      {
+        routeNames: ["/supplier-management/purchasehistories"],
+        name: "title.purchases",
+        icon: ArrowRightLeft,
       },
     ],
   },

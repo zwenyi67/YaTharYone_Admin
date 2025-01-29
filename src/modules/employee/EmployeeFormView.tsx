@@ -13,6 +13,7 @@ import DatePicker from '@/components/ui/datepicker';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { t } from 'i18next';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
   employee_id: z.string().nonempty({
@@ -22,16 +23,19 @@ const formSchema = z.object({
     message: "Full name must be at least 2 characters.",
   }),
   profile: z
-    .instanceof(File, {
-      message: "Profile photo is required and must be an image file.",
-    })
-    .refine(
-      (file) =>
-        ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
-      {
-        message: "Only PNG, JPG, or JPEG files are allowed.",
-      }
-    ), // Validate as an instance of File
+    .union([
+      z.string().optional(),
+      z
+        .instanceof(File)
+        .refine(
+          (file) =>
+            ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
+          {
+            message: "Only PNG, JPG, or JPEG files are allowed.",
+          }
+        ),
+    ])
+    .optional(),
   phone: z.string().min(10, {
     message: "Phone number must be at least 10 digits.",
   }),
@@ -50,8 +54,8 @@ const formSchema = z.object({
   date_hired: z.date({
     required_error: "Hired date is required.",
   }),
-  role_id: z.number({
-    required_error: "Role ID is required.",
+  role_id: z.string().min(1, {
+    message: "Role is required.",
   }),
   createby: z.number().optional(), // Assuming this is optional for the form
   username: z.string().min(2, {
@@ -64,7 +68,7 @@ const formSchema = z.object({
 
 export default function EmployeeFormView() {
 
-  const { data, isFetching } = api.employee.getRoles.useQuery();
+  const { data } = api.employee.getRoles.useQuery();
   const navigate = useNavigate();
 
 
@@ -85,7 +89,7 @@ export default function EmployeeFormView() {
       birth_date: null,
       address: "",
       date_hired: null,
-      role_id: 1,
+      role_id: "",
       createby: 1,
       username: "",
       password: "",
@@ -103,7 +107,7 @@ export default function EmployeeFormView() {
       birth_date: emp?.birth_date ? new Date(emp.birth_date) : undefined,
       address: emp?.address || "",
       date_hired: emp?.date_hired ? new Date(emp.date_hired) : undefined,
-      role_id: emp?.role_id || 1,
+      role_id: emp?.role_id.toString() || "",
       createby: emp?.createby || 1,
       username: emp?.username || "",
       password: emp?.password || "",
@@ -117,7 +121,7 @@ export default function EmployeeFormView() {
           title: "New Employee added successfully",
           variant: "success",
         });
-        navigate("/employees");
+        navigate("/employee-management");
       },
       onError: (error) => {
         console.error("Error adding Employee process: ", error);
@@ -136,7 +140,7 @@ export default function EmployeeFormView() {
           title: "Employee updated successfully",
           variant: "success",
         });
-        navigate("/employees");
+        navigate("/employee-management");
       },
       onError: (error) => {
         console.error("Error updating Employee process: ", error);
@@ -236,7 +240,7 @@ export default function EmployeeFormView() {
         <div className='flex mb-5'>
           <div className='me-5'>
             <Link to={'/employee-management'}>
-              <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500'/>
+              <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
             </Link>
           </div>
           <div className='text-base font-semibold mt-1 text-secondary'>
@@ -262,242 +266,209 @@ export default function EmployeeFormView() {
                 id="profilePhoto"
                 accept="image/png, image/jpeg, image/jpg"
                 onChange={handleImageChange}
-                className="hidden"
+                className="hidden"  
               />
               {fileError && <p className="text-red-500 text-sm">{fileError}</p>}
 
             </div>
-            <div className='grid grid-cols-2 gap-5'>
-              <div>
-                {/* Employee Id */}
-                <div className=''>
-                  <FormField
-                    control={form.control}
-                    name="employee_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Employee ID <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                        <FormControl>
-                          <Input placeholder="Employee ID" {...field} />
-                        </FormControl>
-                        <div className='h-4'>
-                          <FormMessage />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                {/* Full Name */}
-                <div className=''>
-                  <FormField
-                    control={form.control}
-                    name="fullname"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                        <FormControl>
-                          <Input placeholder="Full Name" {...field} />
-                        </FormControl>
-                        <div className='h-4'>
-                          <FormMessage />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                {/* BirthDate */}
-                <div className=''>
-                  <FormField
-                    control={form.control}
-                    name="birth_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Birth Date <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                        <FormControl>
-                          <DatePicker
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder="Birth Date"
-                          />
-                        </FormControl>
-                        <div className='h-4'>
-                          <FormMessage />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                {/* Address */}
-                <div className=''>
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Address <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                        <FormControl>
-                          <Input placeholder="Address" {...field} />
-                        </FormControl>
-                        <div className='h-4'>
-                          <FormMessage />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                {/* Phone */}
-                <div className=''>
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                        <FormControl>
-                          <Input placeholder="Phone Number" {...field} />
-                        </FormControl>
-                        <div className='h-4'>
-                          <FormMessage />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-              <div>
-                <div>
-                  {/* Email */}
-                  <div className=''>
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                          <FormControl>
-                            <Input placeholder="Email" {...field} />
-                          </FormControl>
-                          <div className='h-4'>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  {/* Gender */}
-                  <div className=''>
-                    <FormField
-                      control={form.control}
-                      name="gender"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Gender <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                          <FormControl>
-                            <Input placeholder="Gender" {...field} />
-                          </FormControl>
-                          <div className='h-4'>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  {/* Role */}
-                  <div className=''>
-                    <FormField
-                      control={form.control}
-                      name="role_id"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Role <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                          <FormControl>
-                            <select
-                              {...field}
-                              disabled={isFetching}
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-[5.5px] text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                              <option value="" disabled>
-                                {isFetching ? "Loading roles..." : "Select a role"}
-                              </option>
-                              {data?.map((role: GetRolesType) => (
-                                <option key={role.id} value={role.id}>
-                                  {role.name}
-                                </option>
-                              ))}
-                            </select>
-                          </FormControl>
-                          <div className='h-4'>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  {/* HiredDate */}
-                  <div className=''>
-                    <FormField
-                      control={form.control}
-                      name="date_hired"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Hired Date <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                          <FormControl>
-                            <DatePicker
-                              value={field.value}
-                              onChange={field.onChange}
-                              placeholder="Hired Date"
-                            />
-                          </FormControl>
-                          <div className='h-4'>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  {/* Username */}
-                  <div className=''>
-                    <FormField
-                      control={form.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Username <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                          <FormControl>
-                            <Input placeholder="Username" {...field} />
-                          </FormControl>
-                          <div className='h-4'>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  {/* Password */}
-                  <div className=''>
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Password" {...field} />
-                          </FormControl>
-                          <div className='h-4'>
-                            <FormMessage />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-5">
-                  Submit
-                </button>
-              </div>
+            <div className='grid grid-cols-2 gap-6 mt-5'>
+              {/* Employee Id */}
+              <FormField
+                control={form.control}
+                name="employee_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Employee ID <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Employee ID" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Full Name */}
+              <FormField
+                control={form.control}
+                name="fullname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Full Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* BirthDate */}
+              <FormField
+                control={form.control}
+                name="birth_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Birth Date <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Birth Date"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Address */}
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Phone */}
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Phone Number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Gender */}
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem >
+                    <FormLabel>Gender <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => field.onChange(value)} // Update form state
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Role */}
+              <FormField
+                control={form.control}
+                name="role_id"
+                render={({ field }) => (
+                  <FormItem >
+                    <FormLabel>Role <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => field.onChange(value)} // Update form state
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {data?.map((role: GetRolesType) => (
+                            <SelectItem key={role.id} value={role.id.toString()}>{role.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* HiredDate */}
+              <FormField
+                control={form.control}
+                name="date_hired"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hired Date <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        value={field.value}
+                        onChange={(date) => field.onChange(date)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Username */}
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Username" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Password */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div>
+              <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-5">
+                Submit
+              </button>
             </div>
           </form>
         </Form>

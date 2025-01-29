@@ -41,7 +41,7 @@ const ManageColumn = ({ data }: { data: GetEmployeesType }) => {
 	return (
 		<div className="flex items-center justify-center">
 			<Button variant={"columnIcon"} size={"icon"}>
-				<Link to={`/employees/${data.id}/edit`} state={{ data }}>
+				<Link to={`/employee-management/${data.id}/edit`} state={{ data }}>
 					<Pencil2Icon color="green" />
 				</Link>
 			</Button>

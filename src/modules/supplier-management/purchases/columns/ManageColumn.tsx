@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { Pencil2Icon } from "@radix-ui/react-icons"
-import { Link } from "react-router-dom"
 import { Info, Trash2Icon } from "lucide-react"
 import { useState } from "react"
 import api from '@/api';
@@ -44,11 +42,6 @@ const ManageColumn = ({ data }: { data: GetPurchaseType }) => {
 			<Button variant={"columnIcon"} size={"icon"} onClick={() => setIsDetailOpen(true)}>
 				<Info color="blue" />
 			</Button>
-			<Button variant={"columnIcon"} size={"icon"}>
-				<Link to={`/inventory-management/inventories/${data.id}/edit`} state={{ data }}>
-					<Pencil2Icon color="green" />
-				</Link>
-			</Button>
 			<Button variant={"columnIcon"} size={"icon"} onClick={() => setIsDialogOpen(true)}>
 				<Trash2Icon color="red" />
 			</Button>
@@ -89,57 +82,47 @@ const ManageColumn = ({ data }: { data: GetPurchaseType }) => {
 								✕
 							</button>
 						</div>
-						<div className="w-full">
+						<div className="space-y-3 text-gray-700">
+							<div className="flex items-center space-x-2">
+								<span className="font-medium">Supplier :</span>
+								<span>{data.supplier.name}</span>
+							</div>
+							<div className="flex items-center space-x-2">
+								<span className="font-medium">Purchase Note :</span>
+								<span>{data.purchase_note}</span>
+							</div>
+							<div className="flex items-center space-x-2">
+								<span className="font-medium">Purchase Date: </span>
+								<span>{data.purchase_date}</span>
+							</div>
+							<div className="flex items-center space-x-2">
+								<span className="font-medium">Total Amount :</span>
+								<span>${data.total_amount}</span>
+							</div>
+						</div>
+						<div className="w-full mt-8">
 							<table className="table-auto w-full border-collapse border border-gray-300 shadow-lg">
 								<thead className="bg-gray-200 text-gray-700">
 									<tr>
 										<th className="px-4 py-2 border border-gray-300">No</th>
 										<th className="px-4 py-2 border border-gray-300">Item Name</th>
 										<th className="px-4 py-2 border border-gray-300">Quantity</th>
-										<th className="px-4 py-2 border border-gray-300">Unit Price</th>
 										<th className="px-4 py-2 border border-gray-300">Total</th>
 									</tr>
 								</thead>
 								<tbody className="text-gray-800">
 									{data.purchase_details.map((item, index) => (
 										<tr className="hover:bg-gray-100">
-										<td className="px-4 py-2 text-center border border-gray-300">{index+1}</td>
-										<td className="px-4 py-2 text-center border border-gray-300">{item.item.name}</td>
-										<td className="px-4 py-2 text-center border border-gray-300">{item.quantity}</td>
-										<td className="px-4 py-2 text-center border border-gray-300">${item.unit_cost}</td>
-										<td className="px-4 py-2 text-center border border-gray-300">${item.quantity* item.unit_cost}</td>
-									</tr>
+											<td className="px-4 py-2 text-center border border-gray-300">{index + 1}</td>
+											<td className="px-4 py-2 text-center border border-gray-300">{item.item.name}</td>
+											<td className="px-4 py-2 text-center border border-gray-300">{item.quantity} {item.item.unit_of_measure}</td>
+											<td className="px-4 py-2 text-center border border-gray-300">${item.total_cost}</td>
+										</tr>
 									))}
 								</tbody>
 							</table>
-
 						</div>
-						{/* <div className="space-y-3 text-gray-700">
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Inventory Name:</span>
-								<span>{data.name}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Contact Person:</span>
-								<span>{data.contact_person}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Email:</span>
-								<span className="text-blue-600 underline">{data.email}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Phone:</span>
-								<span>{data.phone}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Address:</span>
-								<span>{data.address}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Business Type:</span>
-								<span>{data.business_type}</span>
-							</div>
-						</div> */}
+
 						<div className="mt-6 flex justify-center space-x-4">
 							<Button
 								variant="secondary"

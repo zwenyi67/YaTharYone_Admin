@@ -9,6 +9,33 @@ export interface GetMenusType extends TimeStamps {
   description: string;
   category_id: number;
   category: CategoryType;
+  status: string;
+  inventory_items: InventoryItems[];
+  addon_items: AddonItems[];
+}
+
+export interface InventoryItems {
+  id: number | string;
+  name: string;
+  unit_of_measure: string;
+  quantity: number | string;
+}
+
+export interface AddonItems {
+  id:  number | string;
+  name: string;
+  unit_of_measure: string;
+  quantity:  number | string;
+  additional_price:  number | string;
+}
+
+export interface AddonItemType {
+  item_id: number | string;
+  item_name: string;
+  unit_of_measure: string;
+  item_category_id: number | string;
+  additional_price: number | any;
+  quantity: number | any;
 }
 
 export interface IngredientType {
@@ -39,7 +66,7 @@ export interface AddMenuPayloadType {
 }
 
 export interface UpdateMenuPayloadType {
-  id: string | number ;
+  id: string | number;
   name: string;
   price: number;
   description: string;
@@ -57,4 +84,9 @@ export interface PostResponse {
   message: string
 }
 
+export interface AddonItemPayloadType {
+  menu_id: string | number;
+    addon_items: AddonItems[];
+    createby: number;
+}
 

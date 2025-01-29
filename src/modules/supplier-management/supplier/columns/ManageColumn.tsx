@@ -77,7 +77,7 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 			{/* Detail Dialog Box */}
 			{isDetailOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-					<div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md transform transition-all duration-300 scale-100 hover:scale-105">
+					<div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
 						<div className="flex items-center justify-between mb-4">
 							<h2 className="text-xl font-bold text-gray-800">
 								Supplier Details
@@ -90,8 +90,11 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 							</button>
 						</div>
 						<div className="space-y-3 text-gray-700">
+							<div>
+								<img src={`http://127.0.0.1:8000${data.profile}`} alt="" />
+							</div>
 							<div className="flex items-center space-x-2">
-								<span className="font-medium">Supplier Name:</span>
+								<span className="font-medium">Supplier:</span>
 								<span>{data.name}</span>
 							</div>
 							<div className="flex items-center space-x-2">

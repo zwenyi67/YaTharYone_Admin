@@ -24,7 +24,7 @@ export interface AddEmployeePayloadType {
   birth_date: string;
   address: string;
   date_hired: string;
-  role_id: number;
+  role_id: string;
   createby?: number;
   username: string;
   password: string

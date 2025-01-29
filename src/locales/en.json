@@ -67,7 +67,7 @@
     "supplier-management": {
       "suppliers": {
         "number": "No",
-        "name": "Supplier Name",
+        "name": "Supplier",
         "email": "Email",
         "phone": "Phone",
         "profile": "Profile"
@@ -84,11 +84,13 @@
       "inventory": {
         "number": "No",
         "name": "Item Name",
+        "category": "Item Category",
         "unit_of_measure": "Unit",
         "unit_cost": "Cost",
         "current_stock": "Current Stock",
         "min_stock_level": "Min Stock Level",
-        "reorder_level": "Reorder Level"
+        "reorder_level": "Reorder Level",
+        "expiry_period_inDay": "Expiry Period In Day"
       },
       "item-category": {
         "number": "No",
@@ -102,7 +104,8 @@
         "name": "Menu Name",
         "profile": "Image",
         "price": "Price",
-        "category": "Category"
+        "category": "Category",
+        "addons": "Add On Item"
       },
       "menu-category": {
         "number": "No",

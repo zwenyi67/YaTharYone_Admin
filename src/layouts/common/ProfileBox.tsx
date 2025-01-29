@@ -18,7 +18,7 @@ const ProfileBox = () => {
 			>
 				<Avatar className="w-8 h-8">
 					<AvatarImage src="/image" alt="Profile Image" />
-					<AvatarFallback>CN</AvatarFallback>
+					<AvatarFallback>A</AvatarFallback>
 				</Avatar>
 				<div className="text-left">
 					<h5 className="text-[13px] font-semibold">Admin</h5>
