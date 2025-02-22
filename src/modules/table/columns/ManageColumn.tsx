@@ -41,7 +41,7 @@ const ManageColumn = ({ data }: { data: GetTablesType }) => {
 	return (
 		<div className="flex items-center justify-center">
 			<Button variant={"columnIcon"} size={"icon"}>
-				<Link to={`/tables/${data.id}/edit`} state={{ data }}>
+				<Link to={`/table-management/${data.id}/edit`} state={{ data }}>
 					<Pencil2Icon color="green" />
 				</Link>
 			</Button>

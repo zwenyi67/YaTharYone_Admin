@@ -8,49 +8,37 @@ import { CircleChevronLeft } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from "react-router-dom";
-import { AddSupplierPayloadType, UpdateSupplierPayloadType } from '@/api/supplier/types';
 import { t } from 'i18next';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 import { useDispatch } from 'react-redux';
+import { AddTablePayloadType, UpdateTablePayloadType } from '@/api/table/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Supplier name must be at least 2 characters.",
+  table_no: z.string().min(2, {
+    message: "Table Number must be at least 2 characters.",
   }),
-  profile: z
-    .union([
-      z.string().optional(),
-      z
-        .instanceof(File)
-        .refine(
-          (file) =>
-            ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
-          {
-            message: "Only PNG, JPG, or JPEG files are allowed.",
-          }
-        ),
-    ])
-    .optional(),
-  contact_person: z.string().min(3, {
-    message: "Contact Person must be at least 3 characters.",
-  }),
-  business_type: z.string().min(3, {
-    message: "Business Type must be at least 3 characters.",
-  }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits.",
-  }),
-  email: z.string().email({
-    message: "Must be a valid email address.",
-  }),
-  address: z.string().min(2, {
-    message: "Address must be at least 2 characters.",
-  }),
+  capacity: z.union([
+    z.string(),
+    z.number()
+  ])
+    .transform((value) => {
+      if (typeof value === 'string' && !isNaN(Number(value))) {
+        return Number(value);
+      }
+      return value;
+    })
+    .refine((value) => {
+      return typeof value === 'number' && value >= 1;
+    }, { message: "Capacity must be greater than 0." }),
+    status: z.string().min(2, {
+      message: "Status must be at least 2 characters.",
+    }),
   createby: z.number().optional(), // Assuming this is optional for the form
 });
 
-export default function SupplierFormView() {
+export default function TableFormView() {
 
   const navigate = useNavigate();
 
@@ -61,47 +49,39 @@ export default function SupplierFormView() {
 
   const passedData = location.state?.data;
 
-  const sup: AddSupplierPayloadType = id
+  const table: AddTablePayloadType = id
     ? { ...passedData }
     : {
       name: "",
-      profile: undefined,
-      contact_person: "",
-      phone: "",
-      email: "",
-      business_type: "",
-      address: "",
+      capacity: "",
+      status: "",
       createby: 1,
     };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: sup?.name || "",
-      profile: sup?.profile,
-      contact_person: sup?.contact_person,
-      phone: sup?.phone || "",
-      email: sup?.email || "",
-      business_type: sup?.business_type || "",
-      address: sup?.address || "",
-      createby: sup?.createby || 1,
+      table_no: table?.table_no || "",
+      capacity: table?.capacity || "",
+      status: table?.status || "",
+      createby: table?.createby || 1,
     },
   });
 
-  const { mutate: addSupplier } =
-    api.supplier.addSupplier.useMutation({
+  const { mutate: addTable } =
+    api.table.addTable.useMutation({
       onMutate: () => {
         dispatch(openLoader());
       },
       onSuccess: () => {
         toast({
-          title: "New Supplier added successfully",
+          title: "New Table added successfully",
           variant: "success",
         });
-        navigate("/supplier-management/suppliers");
+        navigate("/table-management");
       },
       onError: (error) => {
-        form.setError("name", { type: "custom", message: error.message });
+        form.setError("table_no", { type: "custom", message: error.message });
         toast({
           title: error.message,
           variant: "destructive",
@@ -112,19 +92,19 @@ export default function SupplierFormView() {
       },
     });
 
-  const { mutate: updateSupplier } =
-    api.supplier.updateSupplier.useMutation({
+  const { mutate: updateTable } =
+    api.table.updateTable.useMutation({
       onMutate: () => {
         dispatch(openLoader());
       }, onSuccess: () => {
         toast({
-          title: "Supplier updated successfully",
+          title: "Table updated successfully",
           variant: "success",
         });
-        navigate("/supplier-management/suppliers");
+        navigate("/table-management");
       },
       onError: (error) => {
-        form.setError("name", { type: "custom", message: error.message });
+        form.setError("table_no", { type: "custom", message: error.message });
         toast({
           title: error.message,
           variant: "destructive",
@@ -136,47 +116,32 @@ export default function SupplierFormView() {
     });
 
 
-  const onSubmit = async (sup: z.infer<typeof formSchema>) => {
+  const onSubmit = async (table: z.infer<typeof formSchema>) => {
     try {
       // Format dates and create FormData
       const formData = new FormData();
-      formData.append("name", sup.name);
-
-      // Handle profile based on whether it's a file or an existing URL
-      const profile = form.getValues("profile");
-      if (profile instanceof File) {
-        formData.append("profile", profile); // Append the new file
-      } else if (id && sup.profile) {
-        formData.append("profile", sup.profile); // Append the existing profile URL
-      }
-
-      formData.append("contact_person", sup.contact_person);
-      formData.append("phone", sup.phone);
-      formData.append("email", sup.email);
-      formData.append("business_type", sup.business_type);
-      formData.append("address", sup.address);
-
+      formData.append("table_no", table.table_no);
+      formData.append("capacity", table.capacity.toString());
+      formData.append("status", table.status);
+  
       if (id) {
         // For edit form
-        formData.append("updateby", (sup.createby || 1).toString());
+        formData.append("updateby", (table.createby || 1).toString());
         formData.append("id", id);
 
         // Call update API
-        await updateSupplier(formData as unknown as UpdateSupplierPayloadType);
+        await updateTable(formData as unknown as UpdateTablePayloadType);
       } else {
         // For add form
-        formData.append("createby", (sup.createby || 1).toString());
+        formData.append("createby", (table.createby || 1).toString());
 
         // Call add API
-        await addSupplier(formData as unknown as AddSupplierPayloadType);
+        await addTable(formData as unknown as AddTablePayloadType);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
-
-
-
 
   return (
     <section className="m-4">
@@ -186,12 +151,12 @@ export default function SupplierFormView() {
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
-            <Link to={'/supplier-management/suppliers'}>
+            <Link to={'/table-management'}>
               <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
             </Link>
           </div>
           <div className='text-base font-semibold mt-1 text-secondary'>
-            {id ? "Edit Supplier" : "Add New Supplier"}
+            {id ? "Edit Table" : "Add New Table"}
           </div>
         </div>
         <Form {...form}>
@@ -200,87 +165,61 @@ export default function SupplierFormView() {
               {/* Full Name */}
               <FormField
                 control={form.control}
-                name="name"
+                name="table_no"
                 render={({ field }) => (
                   <FormItem >
-                    <FormLabel>Supplier Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormLabel>Table Number <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                     <FormControl>
-                      <Input placeholder="Full Name" {...field} />
+                      <Input placeholder="Table Number" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* Contact Person */}
+              {/* Capacity */}
               <FormField
                 control={form.control}
-                name="contact_person"
+                name="capacity"
                 render={({ field }) => (
                   <FormItem >
-                    <FormLabel>Contact Person <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormLabel>Capacity <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                     <FormControl>
-                      <Input placeholder="Contact Person" {...field} />
+                      <Input type='number'
+                      placeholder="Capacity" {...field} onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* Phone */}
+              {/* Status */}
               <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Phone Number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Email */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Business Type */}
-              <FormField
-                control={form.control}
-                name="business_type"
-                render={({ field }) => (
-                  <FormItem >
-                    <FormLabel>Business Type <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Business Type" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Address */}
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem >
-                    <FormLabel>Address <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Address" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem >
+                      <FormLabel>Status<span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='Select Category'/>
+                          </SelectTrigger>
+                          <SelectContent>
+                              <SelectItem value='available'>Available</SelectItem>
+                              <SelectItem value='occupied'>Occupied</SelectItem>
+                              <SelectItem value='reservation'>Reservation</SelectItem>
+                              <SelectItem value='outofservice'>Out of Service</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              
             </div>
             <div>
               <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-7">

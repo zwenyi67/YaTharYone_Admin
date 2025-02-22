@@ -6,10 +6,10 @@ import {
 } from "@tanstack/react-query";
 import axios from "axios";
 import {
-  AddEmployeePayloadType,
+  AddTablePayloadType,
   GetTablesType,
   PostResponse,
-  UpdateEmployeePayloadType,
+  UpdateTablePayloadType,
 } from "./types";
 
 const table_URL = "/admin/tables";
@@ -34,18 +34,18 @@ export const getTables = {
     }),
 };
 
-export const addEmployee = {
+export const addTable = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
       Error,
-      AddEmployeePayloadType,
+      AddTablePayloadType,
       unknown
     >
   ) => {
     return useMutation({
-      mutationKey: ["addEmployee"],
-      mutationFn: async (payload: AddEmployeePayloadType) => {
+      mutationKey: ["addTable"],
+      mutationFn: async (payload: AddTablePayloadType) => {
         const response = await axios.post(
           `${table_URL}/create`,
           payload
@@ -67,18 +67,18 @@ export const addEmployee = {
   },
 }
 
-export const updateEmployee = {
+export const updateTable = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
       Error,
-      UpdateEmployeePayloadType,
+      UpdateTablePayloadType,
       unknown
     >
   ) => {
     return useMutation({
-      mutationKey: ["updateEmployee"],
-      mutationFn: async (payload: UpdateEmployeePayloadType) => {
+      mutationKey: ["updateTable"],
+      mutationFn: async (payload: UpdateTablePayloadType) => {
         const response = await axios.post(
           `${table_URL}/edit`,
           payload

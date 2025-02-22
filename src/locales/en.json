@@ -44,9 +44,11 @@
     "purchasing-transactions": "Purchasing Transactions",
     "inventory-management": "Inventory Management",
     "item-category-management": "Item Category Management",
+    "order-management": "Order Management",
     "inventory": "Inventory",
     "item-category": "Item Category",
     "menu": "Menu",
+    "order": "Order",
     "menu-category": "Menu Categroy",
     "employee-management": "Employee Management",
     "table-management": "Table Management",
@@ -123,12 +125,21 @@
     "table-management": {
       "number": "No",
       "tableNo": "Table Number",
-      "capacity": "Capacity"
+      "capacity": "Capacity",
+      "status": "Status"
+    },
+    "order-management": {
+      "order": {
+        "number": "No",
+        "order_number": "Order Number",
+        "total_price": "Total Price",
+        "status": "Status",
+        "waiter": "Waiter",
+        "table": "Table No"
+      }
     },
     "sd": {}
   },
-
-
   "success-title": {
     "login": "You logged in with the following email:",
     "add": "Addition successful",

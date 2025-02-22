@@ -13,6 +13,7 @@ import { t } from 'i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useDispatch } from 'react-redux';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
+import FormHeader from '@/components/common/FormHeader';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -82,7 +83,7 @@ export default function InventoryFormView() {
 
   const dispatch = useDispatch();
 
-  const { data, isFetching } = api.inventory.getItemCategories.useQuery();
+  const { data, isFetching, refetch } = api.inventory.getItemCategories.useQuery();
 
   const location = useLocation();
   const { id } = useParams();
@@ -200,9 +201,11 @@ export default function InventoryFormView() {
 
   return (
     <section className="m-4">
-      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-        {t("title.inventory-management")}
-      </div>
+      <FormHeader
+				title={t("title.inventory-management")}
+				onRefresh={() => refetch()}
+				isLoading={isFetching}
+			/>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>

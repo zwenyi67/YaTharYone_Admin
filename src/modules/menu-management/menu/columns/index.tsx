@@ -3,7 +3,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import ManageColumn from "./ManageColumn";
 import { GetMenusType } from "@/api/menu/types";
-import AddonsColumn from "./AddonsColumn";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -82,15 +81,6 @@ export const columns: ColumnDef<GetMenusType>[] = [
           {formatDate(row.original.created_at.toString(), "dd/MM/yyyy HH:mm")}
         </div>
       );
-    },
-  },
-  {
-    accessorKey: "addons",
-    header: () => (
-      <TableHeaderCell className="text-center">{`${baseIndex}.addons`}</TableHeaderCell>
-    ),
-    cell: (data) => {
-      return <AddonsColumn data={data.row.original} />;
     },
   },
   {

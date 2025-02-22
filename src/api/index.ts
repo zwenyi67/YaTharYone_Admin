@@ -7,6 +7,8 @@ import * as menu from "./menu";
 import * as itemCategory from "./item-category";
 import * as menuCategory from "./menu-category";
 import * as purchaseItem from "./purchase-item";
+import * as order from "./order";
+
 
 class API {
   auth: typeof auth;
@@ -18,7 +20,7 @@ class API {
   itemCategory: typeof itemCategory;
   menuCategory: typeof menuCategory;
   purchaseItem: typeof purchaseItem;
-
+  order: typeof order;
 
   constructor() {
     this.auth = auth;
@@ -30,6 +32,8 @@ class API {
     this.itemCategory = itemCategory;
     this.menuCategory = menuCategory;
     this.purchaseItem = purchaseItem;
+    this.order = order;
+
   }
 }
 

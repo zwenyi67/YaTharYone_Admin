@@ -35,7 +35,7 @@ import InventoryView from "@/modules/inventory-management/inventory/InventoryVie
 import InventoryFormView from "@/modules/inventory-management/inventory/InventoryFormView";
 import ItemCategoryFormView from "@/modules/inventory-management/item-category/ItemCategoryFormView";
 import ItemCategoryView from "@/modules/inventory-management/item-category/ItemCategoryView";
-import AddonFormView from "@/modules/menu-management/menu/AddonFormView";
+import OrderView from "@/modules/order-management/order/OrderView";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -150,10 +150,6 @@ const router = createBrowserRouter([
         path: "menu-management/menus/:id/edit",
         element: <MenuFormView />,
       },
-      {
-        path: "menu-management/menus/:id/addonItems",
-        element: <AddonFormView />,
-      },
 
       // Menu Management Start
 
@@ -212,9 +208,11 @@ const router = createBrowserRouter([
         path: "menu-management/:id/edit",
         element: <MenuFormView />,
       },
+
+      //Order Managment
       {
-        path: "menu-management/:id/addonItems",
-        element: <AddonFormView />,
+        path: "/order-management/orders",
+        element: <OrderView />,
       },
     ],
   },

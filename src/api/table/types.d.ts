@@ -5,43 +5,25 @@ export interface GetTablesType extends TimeStamps {
   id: number;
   table_no: string;
   capacity: number;
-  isOccupied: boolean;
+  status: string;
 }
 
-export interface AddEmployeePayloadType {
-  employee_id: string;
-  fullname: string;
-  profile: File;
-  phone: string;
-  email: string;
-  gender: string;
-  birth_date: string;
-  address: string;
-  date_hired: string;
-  role_id: number;
+export interface AddTablePayloadType {
+  table_no: string;
+  capacity: number;
+  status: string;
   createby?: number;
-  username: string;
-  password: string
 }
 
-export interface UpdateEmployeePayloadType {
+export interface UpdateTablePayloadType {
   id: number;
-  employee_id: string;
-  fullname: string;
-  profile: File;
-  phone: string;
-  email: string;
-  gender: string;
-  birth_date: string;
-  address: string;
-  date_hired: string;
-  role_id: number;
+  table_no: string;
+  capacity: number;
+  status: string;
   updateby?: number;
-  username: string;
-  password: string
 }
 
-export interface DeleteEmployeeType {
+export interface DeleteTableType {
   employee_id: string | number;
 }
 

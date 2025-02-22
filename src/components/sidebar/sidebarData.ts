@@ -4,7 +4,6 @@ import {
   Gauge,
   Grid2X2Icon,
   LayoutDashboard,
-  ListPlus,
   SaladIcon,
   Store,
   User2Icon,
@@ -80,9 +79,15 @@ export const sidebarData = [
     subMenu: [],
   },
   {
-    routeNames: ["/addons"],
-    name: "title.menuitem-addon-management",
-    icon: ListPlus,
-    subMenu: [],
+    routeNames: [""],
+    name: "title.order-management",
+    icon: SaladIcon,
+    subMenu: [
+      {
+        routeNames: ["/order-management/orders"],
+        name: "title.order",
+        icon: SaladIcon,
+      },
+    ],
   },
 ];

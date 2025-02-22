@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import TableLoadingBar from "./TableLoadingBar";
 import TableToolbar from "./TableToolbar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ExportExcelButton from "../common/ExportExcelButton";
 
 type ColumnVisibilityType = {
   [key: string]: boolean;
@@ -58,6 +59,9 @@ interface TableUIProps<TData, TValue> {
   tableCellClass?: string;
   selectOptions?: { label: string; value: string }[];
   sectionBelowToolbar?: React.ReactNode | undefined;
+  excelExport?: Boolean;
+  fileName?: string;
+  excludedColumns?: string[];
   opt?: Partial<TableOptions<TData>>;
 }
 
@@ -85,12 +89,29 @@ export function TableUI<TData, TValue>({
   sortSelectNewLine,
   selectOptions,
   sectionBelowToolbar = undefined,
+  excelExport = false,
+  fileName = "",
+  excludedColumns,
+
   opt,
 }: TableUIProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedOpt, setSelectedOpt] = useState<"Oldest" | "Newest">("Newest");
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const defaultExcludedColumns = [
+    "active_flag",
+    "created_at",
+    "updated_at",
+    "createby",
+    "updateby",
+  ];
+
+  // Combine defaults with any extra excluded columns passed via props
+  const finalExcludedColumns = Array.from(
+    new Set([...defaultExcludedColumns, ...(excludedColumns || [])])
+  );
 
   useEffect(() => {
     if (columnFilterValue) {
@@ -200,6 +221,13 @@ export function TableUI<TData, TValue>({
           globalFilter={globalFilter}
           sortSelectNewLine={sortSelectNewLine}
           selectOptions={selectOptions}
+          excelExport= {
+            excelExport && (
+              <div className="space-x-2">
+								<ExportExcelButton data={data!} excludeColumns={finalExcludedColumns} fileName={fileName}/>
+							</div>
+            )
+          }
         >
           {children}
         </TableToolbar>

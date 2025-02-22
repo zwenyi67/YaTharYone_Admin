@@ -2,16 +2,24 @@ import api from "@/api"
 import TableUI from "@/components/table/TableUI"
 import { t } from "i18next"
 import { columns } from "./columns"
+import FormHeader from "@/components/common/FormHeader"
 
 const InventoryView = () => {
 
-	const { data, isFetching } = api.inventory.getInventories.useQuery()
+	const { data, isFetching, refetch, isRefetching } = api.inventory.getInventories.useQuery();
+
+	const excludedColumns = [
+		"inventory_item_category",
+		"item_category_id"
+	];
 
 	return (
 		<section className="m-4">
-			<div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-				{t("title.inventory-management")}
-			</div>
+			<FormHeader
+				title={t("title.inventory-management")}
+				onRefresh={() => refetch()}
+				isLoading={isFetching || isRefetching}
+			/>
 			<div className="p-6 bg-white rounded-b-lg">
 				<TableUI
 					data={data}
@@ -22,10 +30,11 @@ const InventoryView = () => {
 					filterColumns={["name"]}
 					sortColumn="created_at"
 					newCreate="/inventory-management/inventories/create"
+					excelExport={true}
+					fileName={'InventoryData'}
+					excludedColumns={excludedColumns}
 				>
 				</TableUI>
-
-
 			</div>
 		</section>
 	)

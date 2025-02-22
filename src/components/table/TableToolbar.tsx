@@ -34,6 +34,7 @@ type TableToolbarProps = {
   setSelectedOpt: (value: "Oldest" | "Newest") => void;
 
   selectOptions?: { label: string; value: string }[];
+  excelExport?: React.ReactNode | undefined;
   children: React.ReactNode;
 };
 
@@ -50,6 +51,7 @@ const TableToolbar = ({
   sortSelectNewLine = false,
   selectOptions = FILTER_OPTIONS,
   classNames = "",
+  excelExport = undefined,
   children,
 }: TableToolbarProps) => {
 
@@ -83,13 +85,18 @@ const TableToolbar = ({
           sortSelectNewLine ? "2xl:flex-nowrap flex-wrap mt-2 xl:mt-0" : ""
         )}
       >
-        <div className="">
-            <div>
-            <Link to={newCreate as string} className="flex bg-secondary rounded-sm text-white px-4 py-2">
-            <span>Add</span>
-            <div><Plus/></div>
-            </Link>
-            </div>
+        <div className="flex justity-start gap-3">
+          <div>
+            {newCreate && (
+              <Link to={newCreate} className="flex bg-secondary rounded-sm text-white px-4 py-2">
+                <span>Add</span>
+                <div><Plus className="h-5 w-5 pt-1"/></div>
+              </Link>
+            )}
+          </div>
+          <div>
+            {excelExport}
+          </div>
         </div>
         <div
           className={cn(

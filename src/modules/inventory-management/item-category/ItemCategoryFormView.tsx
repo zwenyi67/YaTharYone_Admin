@@ -12,6 +12,7 @@ import { AddItemCategoryPayloadType, UpdateItemCategoryPayloadType } from '@/api
 import { t } from 'i18next';
 import { useDispatch } from 'react-redux';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
+import FormHeader from '@/components/common/FormHeader';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -126,9 +127,9 @@ export default function ItemCategoryFormView() {
 
   return (
     <section className="m-4">
-      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-        {t("title.item-category-management")}
-      </div>
+      <FormHeader
+				title={t("title.item-category-management")}
+			/>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
