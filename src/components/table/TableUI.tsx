@@ -48,6 +48,7 @@ interface TableUIProps<TData, TValue> {
   filterColumns?: string[] | [];
   columnFilterValue?: string;
   newCreate?: string;
+  reportTool?: string;
   filterColumnsState?: boolean;
   globalFilterEnabled?: boolean;
   sortColumn?: string;
@@ -60,6 +61,7 @@ interface TableUIProps<TData, TValue> {
   selectOptions?: { label: string; value: string }[];
   sectionBelowToolbar?: React.ReactNode | undefined;
   excelExport?: Boolean;
+  exportedData?: TData[] | undefined;
   fileName?: string;
   excludedColumns?: string[];
   opt?: Partial<TableOptions<TData>>;
@@ -76,6 +78,7 @@ export function TableUI<TData, TValue>({
   header,
   headerDescription,
   newCreate,
+  reportTool,
   data,
   globalFilterEnabled = true,
   columnVisibility,
@@ -92,7 +95,7 @@ export function TableUI<TData, TValue>({
   excelExport = false,
   fileName = "",
   excludedColumns,
-
+  exportedData,
   opt,
 }: TableUIProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -158,6 +161,12 @@ export function TableUI<TData, TValue>({
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value;
+    setGlobalFilter(inputValue);
+    setPageIndex(0); // Reset the page index
+  };
+
   const clickPrevPage = () => {
     () => table.previousPage()
     setPageIndex(pageIndex - 1);
@@ -173,11 +182,12 @@ export function TableUI<TData, TValue>({
     setPageIndex(pageIndex);
   }
 
-  const clickPageSize = (e: any) => {
+  const clickPageSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPageIndex(0);
     const newPageSize = Number(e.target.value);
-    table.setPageSize(newPageSize); // Update page size
-    setPageSize(e.target.value)
-
+    table.setPageSize(newPageSize);
+    table.setPageIndex(0);
+    setPageSize(newPageSize)
   }
   const table = useReactTable<TData>({
     data: data || [],
@@ -216,15 +226,17 @@ export function TableUI<TData, TValue>({
           setSelectedOpt={setSelectedOpt}
           header={header}
           newCreate={newCreate}
+          reportTool={reportTool}
           selectedOpt={selectedOpt}
           setGlobalFilter={setGlobalFilter}
           globalFilter={globalFilter}
           sortSelectNewLine={sortSelectNewLine}
           selectOptions={selectOptions}
+          onSearchChange={handleSearchChange}
           excelExport= {
             excelExport && (
               <div className="space-x-2">
-								<ExportExcelButton data={data!} excludeColumns={finalExcludedColumns} fileName={fileName}/>
+								<ExportExcelButton data={exportedData!} excludeColumns={finalExcludedColumns} fileName={fileName}/>
 							</div>
             )
           }

@@ -3,6 +3,8 @@ import { t } from "i18next";
 import { ChevronRightIcon } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import './Sidebar.css';
+
 
 const MobileSidebar = () => {
   const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
@@ -62,8 +64,8 @@ const MobileSidebar = () => {
 
 
   return (
-    <div className="h-full">
-      <div className="px-3">
+    <div className="h-full overflow-y-auto rtl-scrollbar">
+      <div className="px-3 ltr-scroll">
         {sidebarData.map((item) => (
           <div
             key={item.name}

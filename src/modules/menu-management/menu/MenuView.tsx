@@ -6,7 +6,12 @@ import FormHeader from "@/components/common/FormHeader"
 
 const MenuView = () => {
 
-	const { data, isFetching, refetch, isRefetching } = api.menu.getMenus.useQuery()
+	const { data, isFetching, refetch, isRefetching } = api.menu.getMenus.useQuery();
+
+	const excludedColumns = [
+		"profile",
+		"addon_items"
+	];
 
 	return (
 		<section className="m-4">
@@ -25,6 +30,10 @@ const MenuView = () => {
 					filterColumns={["name"]}
 					sortColumn="created_at"
 					newCreate="/menu-management/menus/create"
+					excelExport={true}
+					fileName={'MenuData'}
+					exportedData={data}
+					excludedColumns={excludedColumns}
 				>
 				</TableUI>
 

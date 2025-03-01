@@ -13,6 +13,7 @@ import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 import { useDispatch } from 'react-redux';
 import { AddTablePayloadType, UpdateTablePayloadType } from '@/api/table/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import FormHeader from '@/components/common/FormHeader';
 
 
 const formSchema = z.object({
@@ -145,9 +146,9 @@ export default function TableFormView() {
 
   return (
     <section className="m-4">
-      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-        {t("title.table-management")}
-      </div>
+      <FormHeader
+				title={t("title.table-management")}
+			/>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>

@@ -35,6 +35,7 @@ const SupplierView = () => {
 					newCreate="/supplier-management/suppliers/create"
 					excelExport={true}
 					fileName={'SupplierData'}
+					exportedData={data}
 					excludedColumns={excludedColumns}
 				>
 				</TableUI>

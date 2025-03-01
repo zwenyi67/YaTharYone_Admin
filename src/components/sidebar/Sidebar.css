@@ -1,0 +1,27 @@
+/* Sidebar.css */
+.rtl-scrollbar {
+    direction: rtl; /* Moves the scrollbar to the left */
+  }
+  
+  .ltr-scroll {
+    direction: ltr; /* Reset inner content direction */
+  }
+  
+  .rtl-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  
+  .rtl-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .rtl-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #e0e0e0;
+    border-radius: 3px;
+  }
+  
+  .rtl-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #cecece;
+  }
+  

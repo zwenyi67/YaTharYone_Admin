@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useDispatch } from 'react-redux';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 import { GetItemCategoriesType } from '@/api/inventory/types';
+import FormHeader from '@/components/common/FormHeader';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -60,7 +61,7 @@ export default function MenuFormView() {
 
   const dispatch = useDispatch();
 
-  const { data: cates, isFetching: isCateFetching } = api.menu.getMenuCategories.useQuery();
+  const { data: cates, isFetching: isCateFetching, refetch } = api.menu.getMenuCategories.useQuery();
 
   const location = useLocation();
   const { id } = useParams();
@@ -258,9 +259,11 @@ export default function MenuFormView() {
 
   return (
     <section className="m-4">
-      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-        {t("title.menu-management")}
-      </div>
+      <FormHeader
+				title={t("title.menu-management")}
+				onRefresh={() => refetch()}
+				isLoading={isCateFetching}
+			/>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>

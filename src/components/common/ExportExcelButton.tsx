@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs";
 import { Download } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 interface ExportExcelButtonProps<T> {
   data: T[];
@@ -87,9 +88,19 @@ const ExportExcelButton = <T,>({
   };
 
   return (
-    <button className="flex bg-secondary rounded-sm text-white px-4 py-2" onClick={handleExport}>
-      <span className="pe-1">Export</span> <Download className="w-5 h-5 pt-1"/>
-    </button>
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+        <button className="flex bg-secondary rounded-sm text-white p-3" onClick={handleExport}>
+          <Download className="w-5 h-5" />
+        </button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>Export Excel</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+
   );
 };
 

@@ -12,6 +12,7 @@ import { t } from 'i18next';
 import { AddMenuCategoryPayloadType, UpdateMenuCategoryPayloadType } from '@/api/menu-category/types';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 import { useDispatch } from 'react-redux';
+import FormHeader from '@/components/common/FormHeader';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -125,9 +126,9 @@ export default function MenuCategoryFormView() {
 
   return (
     <section className="m-4">
-      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-        {t("title.menu-category-management")}
-      </div>
+      <FormHeader
+				title={t("title.purchasing-transactions")}
+			/>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>

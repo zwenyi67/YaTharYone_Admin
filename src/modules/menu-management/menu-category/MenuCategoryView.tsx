@@ -2,16 +2,19 @@ import api from "@/api"
 import TableUI from "@/components/table/TableUI"
 import { t } from "i18next"
 import { columns } from "./columns"
+import FormHeader from "@/components/common/FormHeader"
 
 const CategoryView = () => {
 
-	const { data, isFetching } = api.menuCategory.getMenuCategories.useQuery()
+	const { data, isFetching, refetch, isRefetching } = api.menuCategory.getMenuCategories.useQuery()
 
 	return (
 		<section className="m-4">
-			<div className="px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-				{t("title.menu-category-management")}
-			</div>
+			<FormHeader
+				title={t("title.menu-category-management")}
+				onRefresh={() => refetch()}
+				isLoading={isFetching || isRefetching}
+			/>
 			<div className="p-6 min-h-[540px] bg-white rounded-b-lg">
 				<TableUI
 					data={data}
@@ -22,6 +25,10 @@ const CategoryView = () => {
 					filterColumns={["name"]}
 					sortColumn="created_at"
 					newCreate="/menu-management/menu-categories/create"
+					excelExport={true}
+					fileName={'MenuCategory'}
+					exportedData={data}
+				// excludedColumns={excludedColumns}
 				>
 				</TableUI>
 			</div>

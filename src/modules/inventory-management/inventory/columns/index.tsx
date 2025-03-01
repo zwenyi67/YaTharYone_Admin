@@ -29,13 +29,15 @@ export const columns: ColumnDef<GetInventoriesType>[] = [
     filterFn: "includesString",
   },
   {
-    accessorKey: "category",
+    accessorFn: (row) => row.inventory_item_category?.name,
+    id: "category", // assign an id since we're using accessorFn
     header: () => <TableHeaderCell>{`${baseIndex}.category`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.inventory_item_category.name}</div>;
+      return <div>{row.original.inventory_item_category?.name}</div>;
     },
     filterFn: "includesString",
   },
+  
   {
     accessorKey: "current_stock",
     header: () => <TableHeaderCell>{`${baseIndex}.current_stock`}</TableHeaderCell>,

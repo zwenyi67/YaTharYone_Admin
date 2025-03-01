@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { t } from 'i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import FormHeader from '@/components/common/FormHeader';
 
 const formSchema = z.object({
   employee_id: z.string().nonempty({
@@ -68,7 +69,7 @@ const formSchema = z.object({
 
 export default function EmployeeFormView() {
 
-  const { data } = api.employee.getRoles.useQuery();
+  const { data, isFetching, refetch, isRefetching } = api.employee.getRoles.useQuery();
   const navigate = useNavigate();
 
 
@@ -233,9 +234,11 @@ export default function EmployeeFormView() {
 
   return (
     <section className="m-4">
-      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
-        {t("title.employee-management")}
-      </div>
+      <FormHeader
+				title={t("title.employee-management")}
+				onRefresh={() => refetch()}
+				isLoading={isFetching || isRefetching}
+			/>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-5'>
           <div className='me-5'>

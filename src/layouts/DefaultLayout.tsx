@@ -4,7 +4,7 @@ import ProfileBox from "./common/ProfileBox";
 import { useState } from "react";
 import { Menu as MenuIcon, X as XIcon } from "lucide-react";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import MobileSidebar from "@/components/sidebar/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 
 const DefaultLayout = () => {
   const { isAuthenticated } = useAuth();
@@ -27,7 +27,7 @@ const DefaultLayout = () => {
           <div className="flex flex-col items-center justify-center h-20">
             <div className="">YaTharYone</div>
           </div>
-          <MobileSidebar />
+          <Sidebar />
         </div>
       </div>
 
@@ -44,7 +44,7 @@ const DefaultLayout = () => {
               </button>
             </div>
             <div>
-              <MobileSidebar />
+              <Sidebar />
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@ const DefaultLayout = () => {
       {/* Main Content */}
       <main className="flex flex-col w-full overflow-y-auto">
         {/* Header */}
-        <nav className="flex items-center justify-between p-3 bg-white shadow-md z-[50] sticky top-0">
+        <nav className="flex items-center justify-between p-3 bg-white shadow-md z-[100] sticky top-0">
           <button
             onClick={toggleSidebar}
             aria-label="Toggle Sidebar"

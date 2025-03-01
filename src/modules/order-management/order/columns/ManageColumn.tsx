@@ -95,7 +95,7 @@ const ManageColumn = ({ data }: { data: GetOrdersType }) => {
 								</thead>
 								<tbody className="text-gray-800">
 									{data.order_details.map((item, index) => (
-										<tr className="hover:bg-gray-100">
+										<tr key={item.id} className="hover:bg-gray-100">
 											<td className="px-4 py-2 text-center border border-gray-300">{index + 1}</td>
 											<td className="px-4 py-2 text-center border border-gray-300">{item.menu.name}</td>
 											<td className="px-4 py-2 text-center border border-gray-300">${item.menu.price}</td>

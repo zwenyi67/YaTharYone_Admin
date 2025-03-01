@@ -26,6 +26,7 @@ const ItemCategoryView = () => {
 					sortColumn="created_at"
 					newCreate="/inventory-management/item-categories/create"
 					excelExport={true}
+					exportedData={data}
 					fileName={'ItemCategoryData'}
 				>
 				</TableUI>

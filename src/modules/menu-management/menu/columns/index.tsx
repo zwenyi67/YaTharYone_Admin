@@ -59,11 +59,13 @@ export const columns: ColumnDef<GetMenusType>[] = [
     filterFn: "includesString",
   },
   {
-    accessorKey: "category_id",
-    header: () => <TableHeaderCell className="text-center">{`${baseIndex}.category`}</TableHeaderCell>,
+    accessorFn: (row) => row.category?.name,
+    id: "category", // assign an id since we're using accessorFn
+    header: () => <TableHeaderCell>{`${baseIndex}.category`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div className="text-center">{row.original.category.name}</div>;
+      return <div>{row.original.category?.name}</div>;
     },
+    filterFn: "includesString",
   },
   {
     accessorKey: "price",
