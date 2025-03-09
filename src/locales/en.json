@@ -80,6 +80,11 @@
         "total_amount": "Total Amount",
         "purchase_note": "Purchase Note",
         "purchase_date": "Purchase Date"
+      },
+      "subTab": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
       }
     },
     "inventory-management": {
@@ -121,7 +126,13 @@
       "fullname": "Fullname",
       "email": "Email",
       "phone": "Phone",
-      "profile": "Profile"
+      "profile": "Profile",
+      "subTab": {
+        "waiter": "Waiter",
+        "chef": "Chef",
+        "cashier": "Cashier",
+        "others": "Others"
+      }
     },
     "table-management": {
       "number": "No",

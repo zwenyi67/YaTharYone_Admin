@@ -17,7 +17,7 @@ const purchase_URL = "/admin/purchases";
 export const getPurchases = {
   useQuery: (statusProp: string, opt?: UseQueryOptions<GetPurchaseType[], Error>) =>
     useQuery<GetPurchaseType[], Error>({
-      queryKey: ["getPurchases", statusProp],
+      queryKey: ["getPurchases", statusProp], // Ensure queryKey is provided
       queryFn: async () => {
         const response = await axios.get(`${purchase_URL}?status=${statusProp}`);
         const { data, status, message } = response.data;
@@ -31,7 +31,7 @@ export const getPurchases = {
       throwOnError: true,
       retry: false, // Disable retries if the network request fails
       enabled: !!statusProp, // Ensures query only runs when statusProp is available
-      ...opt,
+      ...opt, // Spread additional options
     }),
 };
 

@@ -19,20 +19,21 @@ const role_URL = "/admin/roles";
 export const getEmployees = {
   useQuery: (role_id: number, opt?: UseQueryOptions<GetEmployeesType[], Error>) =>
     useQuery<GetEmployeesType[], Error>({
-      queryKey: ["getEmployees", role_id],
+      queryKey: ["getEmployees", role_id], // Dynamic queryKey
       queryFn: async () => {
         const response = await axios.get(`${employee_URL}?role_id=${role_id}`);
-
         const { data, status, message } = response.data;
 
         if (status !== 0) {
-          throw new Error(message);
+          throw new Error(message); // Proper error handling
         }
 
         return data;
       },
       throwOnError: true,
-      ...opt,
+      retry: false, // Disable retries if the network request fails
+      enabled: !!role_id, // Ensures query only runs when role_id is available
+      ...opt, // Spread additional options
     }),
 };
 
