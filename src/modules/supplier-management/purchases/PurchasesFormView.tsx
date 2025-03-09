@@ -152,8 +152,8 @@ export default function PurchasesFormView() {
   useEffect(() => {
   }, [purchases]);
 
-  const { mutate: confirmPurchases } =
-    api.purchaseItem.confirmPurchases.useMutation({
+  const { mutate: requestPurchase } =
+    api.purchaseItem.requestPurchase.useMutation({
       onMutate: () => {
         dispatch(openLoader());
       }, onSuccess: () => {
@@ -182,7 +182,7 @@ export default function PurchasesFormView() {
       total_amount: 1000,
       purchase_note: "Hello purchase",
     }
-    confirmPurchases(payload as ConfirmPurchaseItemsPayloadType);
+    requestPurchase(payload as ConfirmPurchaseItemsPayloadType);
   }
 
   const cancelPurchase = () => {

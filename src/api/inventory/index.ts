@@ -153,4 +153,35 @@ export const deleteInventory = {
   },
 };
 
+export const changeStatus = {
+  useMutation: (
+    opt?: UseMutationOptions<
+      PostResponse,
+      Error,
+      number,
+      unknown
+    >
+  ) => {
+    return useMutation({
+      mutationKey: ["changeStatus"],
+      mutationFn: async (id: number) => {
+        const response = await axios.post(
+          `${inventory_URL}/${id}/changeStatus`
+        );
+
+        const { data, status, message } = response.data;
+
+        if (status !== 0) {
+          throw new Error(
+            message || "An error occurred while processing the request."
+          );
+        }
+
+        return data;
+      },
+      ...opt,
+    });
+  },
+};
+
 

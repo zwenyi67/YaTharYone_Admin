@@ -10,7 +10,8 @@ export interface GetInventoriesType extends TimeStamps {
   expiry_period_inDay: number;
   item_category_id: number;
   description: string;
-  inventory_item_category: InventoryItemCategory
+  inventory_item_category: InventoryItemCategory;
+  status: string;
 }
 export interface InventoryItemCategory {
   id: number;

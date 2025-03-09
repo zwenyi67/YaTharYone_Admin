@@ -254,6 +254,9 @@ export default function InventoryFormView() {
                           <SelectItem value="g">Gram (g)</SelectItem>
                           <SelectItem value="lb">Pound (lb)</SelectItem>
                           <SelectItem value="oz">Ounce (oz)</SelectItem>
+                          <SelectItem value="li">Liter (li)</SelectItem>
+                          <SelectItem value="ml">MilliLiter (ml)</SelectItem>
+                          <SelectItem value="pc">Piece (pc)</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -296,6 +299,7 @@ export default function InventoryFormView() {
                     <FormLabel>Current Stock <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                     <FormControl>
                       <Input
+                        readOnly
                         value={form.getValues("current_stock")}
                         type="number"
                         placeholder="Current Stock"
@@ -359,23 +363,6 @@ export default function InventoryFormView() {
                   </FormItem>
                 )}
               />
-              {/* is Perishable */}
-              {/* <FormField
-                control={form.control}
-                name="is_perishable"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='block'>Is Perishable</FormLabel>
-                    <FormControl>
-                      <Switch
-                        className=''
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              /> */}
               {/* Description */}
               <FormField
                 control={form.control}

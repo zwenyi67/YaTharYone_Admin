@@ -17,11 +17,11 @@ const employee_URL = "/admin/employees";
 const role_URL = "/admin/roles";
 
 export const getEmployees = {
-  useQuery: (opt?: UseQueryOptions<GetEmployeesType[], Error>) =>
+  useQuery: (role_id: number, opt?: UseQueryOptions<GetEmployeesType[], Error>) =>
     useQuery<GetEmployeesType[], Error>({
-      queryKey: ["getEmployees"],
+      queryKey: ["getEmployees", role_id],
       queryFn: async () => {
-        const response = await axios.get(`${employee_URL}`);
+        const response = await axios.get(`${employee_URL}?role_id=${role_id}`);
 
         const { data, status, message } = response.data;
 

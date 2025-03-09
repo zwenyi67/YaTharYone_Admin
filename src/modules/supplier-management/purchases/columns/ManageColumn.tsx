@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Info, Trash2Icon } from "lucide-react"
+import { CheckCircle, CircleCheckBig, Info, Trash2Icon, XCircle } from "lucide-react"
 import { useState } from "react"
 import api from '@/api';
 import { toast } from "@/hooks/use-toast"
@@ -9,18 +9,19 @@ import { GetPurchaseType } from "@/api/purchase-item/types"
 const ManageColumn = ({ data }: { data: GetPurchaseType }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isDetailOpen, setIsDetailOpen] = useState(false);
+	const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 	const queryClient = useQueryClient();
 
 
-	const { mutate: deleteInventory } = api.inventory.deleteInventory.useMutation({
+	const { mutate: confirmPurchase } = api.purchaseItem.ConfirmPurchase.useMutation({
 		onSuccess: () => {
 			toast({
-				title: "Inventory Deleted successfully",
+				title: "Purchase Orders Confirmed successfully",
 				variant: "success",
 			});
 
 			queryClient.invalidateQueries({
-				queryKey: ["getInventories"],
+				queryKey: ["getPurchases"],
 			});
 		},
 		onError: (error) => {
@@ -32,8 +33,33 @@ const ManageColumn = ({ data }: { data: GetPurchaseType }) => {
 		},
 	});
 
-	const handleDelete = (id: number) => {
-		deleteInventory(id);
+	const { mutate: cancelPurchase } = api.purchaseItem.CancelPurchase.useMutation({
+		onSuccess: () => {
+			toast({
+				title: "Purchase Orders Cancelled successfully",
+				variant: "success",
+			});
+
+			queryClient.invalidateQueries({
+				queryKey: ["getPurchases"],
+			});
+		},
+		onError: (error) => {
+
+			toast({
+				title: error.message,
+				variant: "destructive",
+			});
+		},
+	});
+
+	const handleCancel = (id: number) => {
+		cancelPurchase(id);
+		setIsDialogOpen(false);
+	};
+
+	const handleConfirm = (id: number) => {
+		confirmPurchase(id);
 		setIsDialogOpen(false);
 	};
 
@@ -42,26 +68,50 @@ const ManageColumn = ({ data }: { data: GetPurchaseType }) => {
 			<Button variant={"columnIcon"} size={"icon"} onClick={() => setIsDetailOpen(true)}>
 				<Info color="blue" />
 			</Button>
-			<Button variant={"columnIcon"} size={"icon"} onClick={() => setIsDialogOpen(true)}>
-				<Trash2Icon color="red" />
-			</Button>
-			{/* Dialog Box */}
+			{data.status === 'pending' && (
+				<>
+					<Button variant={"columnIcon"} size={"icon"} onClick={() => setIsConfirmDialogOpen(true)}>
+						<CircleCheckBig color="green" />
+					</Button>
+					<Button variant={"columnIcon"} size={"icon"} onClick={() => setIsDialogOpen(true)}>
+						<Trash2Icon color="red" />
+					</Button>
+				</>
+			)}
+
+			{/* Cancel Dialog */}
 			{isDialogOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-					<div className="bg-white p-6 rounded-md shadow-md transform transition-all duration-300 scale-100 hover:scale-105">
-						<h2 className="text-lg font-semibold mb-4">
-							Are you sure you want to delete this item?
-						</h2>
-						<div className="flex justify-center space-x-4">
-							<Button
-								variant="secondary"
-								onClick={() => setIsDialogOpen(false)}
-							>
-								Cancel
-							</Button>
-							<Button variant="destructive" onClick={() => handleDelete(data.id)}>
-								Confirm
-							</Button>
+					<div className="bg-white p-6 rounded-md shadow-lg w-100">
+						<div className="flex justify-center items-center gap-3 text-red-500 mb-4">
+							<XCircle className="h-6 w-6" />
+							<h2 className="text-lg font-semibold">Cancel Purchase Order</h2>
+						</div>
+						<p className="text-gray-700 mb-6 text-center">
+							Are you sure you want to <span className="font-semibold text-red-500">cancel</span> this purchase order?
+						</p>
+						<div className="flex justify-end gap-4">
+							<Button variant="secondary" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+							<Button variant="destructive" onClick={() => handleCancel(data.id)}>Confirm</Button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Confirm Dialog */}
+			{isConfirmDialogOpen && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+					<div className="bg-white p-6 rounded-md shadow-lg w-100">
+						<div className="flex justify-center items-center gap-3 text-green-500 mb-4">
+							<CheckCircle className="h-6 w-6" />
+							<h2 className="text-lg font-semibold">Confirm Purchase Order</h2>
+						</div>
+						<h4 className="text-gray-700 mb-6 text-center">
+							Are you sure you want to <span className="font-semibold text-green-500">confirm</span> this purchase order?
+						</h4>
+						<div className="flex justify-end gap-4">
+							<Button variant="secondary" onClick={() => setIsConfirmDialogOpen(false)}>Cancel</Button>
+							<Button variant="success" onClick={() => handleConfirm(data.id)}>Confirm</Button>
 						</div>
 					</div>
 				</div>

@@ -30,7 +30,6 @@ const InventoryView = () => {
 					filterColumns={["name"]}
 					sortColumn="created_at"
 					newCreate="/inventory-management/inventories/create"
-					reportTool="/inventory-management/inventories/reportTool"
 					excelExport={true}
 					fileName={'InventoryData'}
 					exportedData={data}

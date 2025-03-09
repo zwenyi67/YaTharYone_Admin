@@ -3,6 +3,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import ManageColumn from "./ManageColumn";
 import { GetInventoriesType } from "@/api/inventory/types";
+import StatusColumn from "./StatusColumn";
+import { CircleAlertIcon } from "lucide-react";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -37,12 +39,21 @@ export const columns: ColumnDef<GetInventoriesType>[] = [
     },
     filterFn: "includesString",
   },
-  
   {
     accessorKey: "current_stock",
     header: () => <TableHeaderCell>{`${baseIndex}.current_stock`}</TableHeaderCell>,
     cell: ({ row }) => {
-      return <div>{row.original.current_stock} {row.original.unit_of_measure}</div>;
+      return (
+        <div className="flex">
+          {row.original.current_stock} {row.original.unit_of_measure}
+          {
+            (Number(row.original.current_stock) < Number(row.original.min_stock_level) ||
+              Number(row.original.current_stock) < Number(row.original.reorder_level)) && (
+              <CircleAlertIcon className="text-red-500 w-5 h-5 ms-2" />
+            )
+          }
+        </div >
+      )
     },
   },
   {
@@ -60,10 +71,12 @@ export const columns: ColumnDef<GetInventoriesType>[] = [
     },
   },
   {
-    accessorKey: "expiry_period_inDay",
-    header: () => <TableHeaderCell>{`${baseIndex}.expiry_period_inDay`}</TableHeaderCell>,
-    cell: ({ row }) => {
-      return <div>{row.original.expiry_period_inDay}</div>;
+    accessorKey: "status",
+    header: () => (
+      <TableHeaderCell className="text-center">{`${baseIndex}.status`}</TableHeaderCell>
+    ),
+    cell: (data) => {
+      return <StatusColumn data={data.row.original} />;
     },
   },
   {

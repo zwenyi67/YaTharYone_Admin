@@ -6,7 +6,7 @@ import FormHeader from "@/components/common/FormHeader"
 
 const PurchasesView = () => {
 
-	const { data, isFetching, refetch, isRefetching } = api.purchaseItem.getPurchases.useQuery()
+	const { data, isFetching, refetch, isRefetching } = api.purchaseItem.getPurchases.useQuery('pending');
 
 	return (
 		<section className="m-4">

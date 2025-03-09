@@ -6,7 +6,7 @@ import FormHeader from "@/components/common/FormHeader"
 
 const EmployeeView = () => {
 
-	const { data, isFetching, refetch, isRefetching } = api.employee.getEmployees.useQuery()
+	const { data, isFetching, refetch, isRefetching } = api.employee.getEmployees.useQuery(1)
 
 	return (
 		<section className="m-4">

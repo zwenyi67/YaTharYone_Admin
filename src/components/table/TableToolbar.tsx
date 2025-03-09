@@ -87,8 +87,8 @@ const TableToolbar = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link to={newCreate} className="flex bg-secondary rounded-sm text-white p-3">
-                    <div><Plus className="h-5 w-5" /></div>
+                  <Link to={newCreate} className="flex items-center bg-secondary rounded-sm text-white px-4 text-sm">
+                    <div className="flex"><Plus className="h-4 w-4 pt-1" />Create</div>
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>

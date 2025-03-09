@@ -15,24 +15,26 @@ import {
 const purchase_URL = "/admin/purchases";
 
 export const getPurchases = {
-  useQuery: (opt?: UseQueryOptions<GetPurchaseType[], Error>) =>
+  useQuery: (statusProp: string, opt?: UseQueryOptions<GetPurchaseType[], Error>) =>
     useQuery<GetPurchaseType[], Error>({
-      queryKey: ["getPurchases"],
+      queryKey: ["getPurchases", statusProp],
       queryFn: async () => {
-        const response = await axios.get(`${purchase_URL}`);
-
+        const response = await axios.get(`${purchase_URL}?status=${statusProp}`);
         const { data, status, message } = response.data;
 
         if (status !== 0) {
-          throw new Error(message);
+          throw new Error(message); // Proper error handling
         }
 
         return data;
       },
       throwOnError: true,
+      retry: false, // Disable retries if the network request fails
+      enabled: !!statusProp, // Ensures query only runs when statusProp is available
       ...opt,
     }),
 };
+
 
 export const getItems = {
   useQuery: (categoryId: string | null, opt?: UseQueryOptions<GetItemType[], Error>) =>
@@ -57,7 +59,7 @@ export const getItems = {
     }),
 };
 
-export const confirmPurchases = {
+export const requestPurchase = {
   useMutation: (
     opt?: UseMutationOptions<
       PostResponse,
@@ -67,10 +69,10 @@ export const confirmPurchases = {
     >
   ) => {
     return useMutation({
-      mutationKey: ["confirmPurchases"],
+      mutationKey: ["requestPurchase"],
       mutationFn: async (payload: ConfirmPurchaseItemsPayloadType) => {
         const response = await axios.post(
-          `${purchase_URL}/confirm`,
+          `${purchase_URL}/requestPurchase`,
           payload
         )
 
@@ -89,6 +91,68 @@ export const confirmPurchases = {
     })
   },
 }
+
+export const ConfirmPurchase = {
+  useMutation: (
+    opt?: UseMutationOptions<
+      PostResponse,
+      Error,
+      number,
+      unknown
+    >
+  ) => {
+    return useMutation({
+      mutationKey: ["ConfirmPurchase"],
+      mutationFn: async (id: number) => {
+        const response = await axios.post(
+          `${purchase_URL}/${id}/confirm`
+        );
+
+        const { data, status, message } = response.data;
+
+        if (status !== 0) {
+          throw new Error(
+            message || "An error occurred while processing the request."
+          );
+        }
+
+        return data;
+      },
+      ...opt,
+    });
+  },
+};
+
+export const CancelPurchase = {
+  useMutation: (
+    opt?: UseMutationOptions<
+      PostResponse,
+      Error,
+      number,
+      unknown
+    >
+  ) => {
+    return useMutation({
+      mutationKey: ["CancelPurchase"],
+      mutationFn: async (id: number) => {
+        const response = await axios.post(
+          `${purchase_URL}/${id}/cancel`
+        );
+
+        const { data, status, message } = response.data;
+
+        if (status !== 0) {
+          throw new Error(
+            message || "An error occurred while processing the request."
+          );
+        }
+
+        return data;
+      },
+      ...opt,
+    });
+  },
+};
 
 
 

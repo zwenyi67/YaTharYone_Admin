@@ -91,8 +91,8 @@ const ExportExcelButton = <T,>({
 <TooltipProvider>
   <Tooltip>
     <TooltipTrigger asChild>
-        <button className="flex bg-secondary rounded-sm text-white p-3" onClick={handleExport}>
-          <Download className="w-5 h-5" />
+        <button className="flex bg-secondary rounded-sm text-white px-4 py-2 text-sm" onClick={handleExport}>
+          <Download className="w-4 h-4 pt-1 me-[5px]" /> Export
         </button>
     </TooltipTrigger>
     <TooltipContent>

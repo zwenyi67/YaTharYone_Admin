@@ -92,7 +92,8 @@
         "current_stock": "Current Stock",
         "min_stock_level": "Min Stock Level",
         "reorder_level": "Reorder Level",
-        "expiry_period_inDay": "Expiry Period In Day"
+        "expiry_period_inDay": "Expiry Period In Day",
+        "status": "Status"
       },
       "item-category": {
         "number": "No",

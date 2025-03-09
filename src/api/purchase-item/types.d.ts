@@ -13,6 +13,7 @@ export interface GetPurchaseType extends TimeStamps {
   total_amount: number;
   purchase_note: string;
   purchase_details: PurchaseDetailsType[];
+  status: string;
   supplier: SupplierType;
 
 }
