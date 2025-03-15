@@ -1,12 +1,15 @@
 import {
   ArrowRightLeft,
   BoxIcon,
+  FileCheck,
   Gauge,
   Grid2X2Icon,
   LayoutDashboard,
+  RecycleIcon,
   SaladIcon,
   Store,
   User2Icon,
+  Wallet,
 } from "lucide-react";
 
 export const sidebarData = [
@@ -29,6 +32,11 @@ export const sidebarData = [
         routeNames: ["/inventory-management/inventories"],
         name: "title.inventory",
         icon: BoxIcon,
+      },
+      {
+        routeNames: ["/inventory-management/waste-control"],
+        name: "title.waste-control",
+        icon: RecycleIcon,
       },
     ],
   },
@@ -81,12 +89,17 @@ export const sidebarData = [
   {
     routeNames: [""],
     name: "title.order-management",
-    icon: SaladIcon,
+    icon: FileCheck,
     subMenu: [
       {
         routeNames: ["/order-management/orders"],
         name: "title.order",
-        icon: SaladIcon,
+        icon: FileCheck,
+      },
+      {
+        routeNames: ["/order-management/payments"],
+        name: "title.payment",
+        icon: Wallet,
       },
     ],
   },

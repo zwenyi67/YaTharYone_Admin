@@ -18,10 +18,6 @@ const subTab = [
     id: 3,
     name: "cashier",
   },
-  {
-    id: 4,
-    name: "others",
-  },
 ];
 
 const EmployeeView = () => {
@@ -52,11 +48,10 @@ const EmployeeView = () => {
             <button
               key={status.id}
               onClick={() => handleTabClick(status.id)}
-              className={`px-4 py-2 rounded ${
-                tab === status.id
-                  ? "bg-blue-500 text-white"
+              className={`px-4 py-2 rounded ${tab === status.id
+                  ? "bg-secondary text-white"
                   : "bg-gray-200 text-gray-700"
-              }`}
+                }`}
             >
               {t(`fields.employee-management.subTab.${status.name}`)}
             </button>

@@ -91,7 +91,7 @@ const ManageColumn = ({ data }: { data: GetSuppliersType }) => {
 						</div>
 						<div className="space-y-3 text-gray-700">
 							<div>
-								<img src={`http://127.0.0.1:8000${data.profile}`} alt="" />
+								<img className="h-48 w-48 bg-cover bg-center" src={`http://127.0.0.1:8000${data.profile}`} alt="Supplier Profile" />
 							</div>
 							<div className="flex items-center space-x-2">
 								<span className="font-medium">Supplier:</span>

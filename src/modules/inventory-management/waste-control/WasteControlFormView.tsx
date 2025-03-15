@@ -8,75 +8,62 @@ import { CircleChevronLeft } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from "react-router-dom";
+import { AddItemCategoryPayloadType, UpdateItemCategoryPayloadType } from '@/api/item-category/types';
 import { t } from 'i18next';
-import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 import { useDispatch } from 'react-redux';
-import { AddTablePayloadType, UpdateTablePayloadType } from '@/api/table/types';
+import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 import FormHeader from '@/components/common/FormHeader';
 
-
 const formSchema = z.object({
-  table_no: z.string().min(2, {
-    message: "Table Number must be at least 2 characters.",
+  name: z.string().min(2, {
+    message: "Item name must be at least 2 characters.",
   }),
-  capacity: z.union([
-    z.string(),
-    z.number()
-  ])
-    .transform((value) => {
-      if (typeof value === 'string' && !isNaN(Number(value))) {
-        return Number(value);
-      }
-      return value;
-    })
-    .refine((value) => {
-      return typeof value === 'number' && value >= 1;
-    }, { message: "Capacity must be greater than 0." }),
+  description: z.string().optional(),
   createby: z.number().optional(), // Assuming this is optional for the form
 });
 
-export default function TableFormView() {
+export default function WasteControlFormView() {
 
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const location = useLocation();
   const { id } = useParams();
 
-  const dispatch = useDispatch();
-
   const passedData = location.state?.data;
 
-  const table: AddTablePayloadType = id
+  const item: AddItemCategoryPayloadType = id
     ? { ...passedData }
     : {
       name: "",
-      capacity: "",
+      description: "",
       createby: 1,
     };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      table_no: table?.table_no || "",
-      capacity: table?.capacity || "",
-      createby: table?.createby || 1,
+      name: item?.name || "",
+      description: item?.description || "",
+      createby: item?.createby || 1,
     },
   });
 
-  const { mutate: addTable } =
-    api.table.addTable.useMutation({
+  const { mutate: addItemCategory } =
+    api.itemCategory.addItemCategory.useMutation({
       onMutate: () => {
         dispatch(openLoader());
       },
       onSuccess: () => {
         toast({
-          title: "New Table added successfully",
+          title: "New Item Category added successfully",
           variant: "success",
         });
-        navigate("/table-management");
+        navigate("/inventory-management/item-categories");
       },
       onError: (error) => {
-        form.setError("table_no", { type: "custom", message: error.message });
+        form.setError("name", { type: "custom", message: error.message });
         toast({
           title: error.message,
           variant: "destructive",
@@ -87,19 +74,20 @@ export default function TableFormView() {
       },
     });
 
-  const { mutate: updateTable } =
-    api.table.updateTable.useMutation({
+  const { mutate: updateItemCategory } =
+    api.itemCategory.updateItemCategory.useMutation({
       onMutate: () => {
         dispatch(openLoader());
-      }, onSuccess: () => {
+      },
+      onSuccess: () => {
         toast({
-          title: "Table updated successfully",
+          title: "Item Category updated successfully",
           variant: "success",
         });
-        navigate("/table-management");
+        navigate("/inventory-management/item-categories");
       },
       onError: (error) => {
-        form.setError("table_no", { type: "custom", message: error.message });
+        form.setError("name", { type: "custom", message: error.message });
         toast({
           title: error.message,
           variant: "destructive",
@@ -111,26 +99,26 @@ export default function TableFormView() {
     });
 
 
-  const onSubmit = async (table: z.infer<typeof formSchema>) => {
+  const onSubmit = async (item: z.infer<typeof formSchema>) => {
     try {
       // Format dates and create FormData
       const formData = new FormData();
-      formData.append("table_no", table.table_no);
-      formData.append("capacity", table.capacity.toString());
-  
+      formData.append("name", item.name);
+      formData.append("description", item.description || '');
+
       if (id) {
         // For edit form
-        formData.append("updateby", (table.createby || 1).toString());
+        formData.append("updateby", (item.createby || 1).toString());
         formData.append("id", id);
 
         // Call update API
-        await updateTable(formData as unknown as UpdateTablePayloadType);
+        await updateItemCategory(formData as unknown as UpdateItemCategoryPayloadType);
       } else {
         // For add form
-        formData.append("createby", (table.createby || 1).toString());
+        formData.append("createby", (item.createby || 1).toString());
 
         // Call add API
-        await addTable(formData as unknown as AddTablePayloadType);
+        await addItemCategory(formData as unknown as AddItemCategoryPayloadType);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -140,17 +128,17 @@ export default function TableFormView() {
   return (
     <section className="m-4">
       <FormHeader
-				title={t("title.table-management")}
+				title={t("title.item-category-management")}
 			/>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
-            <Link to={'/table-management'}>
+            <Link to={'/inventory-management/waste-control'}>
               <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
             </Link>
           </div>
           <div className='text-base font-semibold mt-1 text-secondary'>
-            {id ? "Edit Table" : "Add New Table"}
+            {id ? "Edit Item Category" : "Add New Item Category"}
           </div>
         </div>
         <Form {...form}>
@@ -159,34 +147,30 @@ export default function TableFormView() {
               {/* Full Name */}
               <FormField
                 control={form.control}
-                name="table_no"
+                name="name"
                 render={({ field }) => (
                   <FormItem >
-                    <FormLabel>Table Number <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormLabel>Item Category Name <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                     <FormControl>
-                      <Input placeholder="Table Number" {...field} />
+                      <Input placeholder="Item Category Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* Capacity */}
               <FormField
                 control={form.control}
-                name="capacity"
+                name="description"
                 render={({ field }) => (
                   <FormItem >
-                    <FormLabel>Capacity <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input type='number'
-                      placeholder="Capacity" {...field} onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))}
-                      />
+                      <Input placeholder="Description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
             </div>
             <div>
               <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-7">

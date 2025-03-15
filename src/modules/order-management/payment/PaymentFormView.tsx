@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { CircleChevronLeft, PencilRuler, PlusCircleIcon } from 'lucide-react';
+import { CircleChevronLeft } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from "react-router-dom";
@@ -15,10 +15,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useDispatch } from 'react-redux';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
 import { GetItemCategoriesType } from '@/api/inventory/types';
-import FormHeader from '@/components/common/FormHeader';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import UnitConverter from '@/components/common/UnitConverter';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -64,7 +60,7 @@ export default function MenuFormView() {
 
   const dispatch = useDispatch();
 
-  const { data: cates, isFetching: isCateFetching, refetch } = api.menu.getMenuCategories.useQuery();
+  const { data: cates, isFetching: isCateFetching } = api.menu.getMenuCategories.useQuery();
 
   const location = useLocation();
   const { id } = useParams();
@@ -103,20 +99,18 @@ export default function MenuFormView() {
   const [quantity, setQuantity] = useState<number | ''>('');
 
   useEffect(() => {
-    // Reset to default values when no category is selected
-    setItemId("");
-    setItemData("");
-    setItemName("");
-    setUnitOnly("");
-    setQuantity("");
-
+      // Reset to default values when no category is selected
+      setItemId("");
+      setItemData("");
+      setItemName("");
+      setUnitOnly("");
+      setQuantity("");
+    
   }, [itemCategoryId]);
 
   const { data: items } = api.purchaseItem.getItems.useQuery(itemCategoryId);
 
   const [ingredients, setIngredients] = useState<IngredientType[]>([]);
-
-  const [showConverter, setShowConverter] = useState<boolean>(false);
 
   const addIngredient = () => {
     if (itemCategoryId && itemId && quantity) {
@@ -149,12 +143,6 @@ export default function MenuFormView() {
       setQuantity('');
     }
   };
-
-  const removeItem = (item: IngredientType) => {
-    setIngredients((prevIngredients) =>
-      prevIngredients.filter((ingredient) => ingredient.item_id !== item.item_id)
-    );
-  }
 
   const { mutate: addMenu } =
     api.menu.addMenu.useMutation({
@@ -200,40 +188,40 @@ export default function MenuFormView() {
 
   const onSubmit = async (menu: z.infer<typeof formSchema>) => {
     try {
-      if (ingredients.length > 0) {
-        // Format dates and create FormData
-        const formData = new FormData();
-        formData.append("name", menu.name);
+      if(ingredients.length > 0) {
+      // Format dates and create FormData
+      const formData = new FormData();
+      formData.append("name", menu.name);
 
-        // Handle profile based on whether it's a file or an existing URL
-        const profile = form.getValues("profile");
-        if (profile instanceof File) {
-          formData.append("profile", profile); // Append the new file
-        } else if (id && menu.profile) {
-          formData.append("profile", menu.profile); // Append the existing profile URL
-        }
-
-        formData.append("category_id", menu.menu_category_id);
-        formData.append("description", menu.description || '');
-        formData.append("price", menu.price.toString());
-        formData.append("ingredients", JSON.stringify(ingredients));
-
-        if (id) {
-          formData.append("updateby", (menu.createby || 1).toString());
-          formData.append("id", id);
-
-          await updateMenu(formData as unknown as UpdateMenuPayloadType);
-        } else {
-          formData.append("createby", (menu.createby || 1).toString());
-
-          await addMenu(formData as unknown as AddMenuPayloadType);
-        }
-      } else {
-        toast({
-          title: "Please Add Ingredients",
-          variant: "destructive",
-        });
+      // Handle profile based on whether it's a file or an existing URL
+      const profile = form.getValues("profile");
+      if (profile instanceof File) {
+        formData.append("profile", profile); // Append the new file
+      } else if (id && menu.profile) {
+        formData.append("profile", menu.profile); // Append the existing profile URL
       }
+
+      formData.append("category_id", menu.menu_category_id);
+      formData.append("description", menu.description || '');
+      formData.append("price", menu.price.toString());
+      formData.append("ingredients", JSON.stringify(ingredients));
+
+      if (id) {
+        formData.append("updateby", (menu.createby || 1).toString());
+        formData.append("id", id);
+
+        await updateMenu(formData as unknown as UpdateMenuPayloadType);
+      } else {
+        formData.append("createby", (menu.createby || 1).toString());
+
+        await addMenu(formData as unknown as AddMenuPayloadType);
+      }
+    } else {
+      toast({
+        title: "Please Add Ingredients",
+        variant: "destructive",
+      });
+    }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -269,12 +257,10 @@ export default function MenuFormView() {
   };
 
   return (
-    <section className="m-4 overflow-hidden">
-      <FormHeader
-        title={t("title.menu-management")}
-        onRefresh={() => refetch()}
-        isLoading={isCateFetching}
-      />
+    <section className="m-4">
+      <div className="border px-4 py-3 bg-secondary rounded-t-lg text-white font-semibold">
+        {t("title.menu-management")}
+      </div>
       <div className="p-6 bg-white rounded-lg">
         <div className='flex mb-8'>
           <div className='me-5'>
@@ -384,24 +370,19 @@ export default function MenuFormView() {
                 )}
               />
             </div>
-            <UnitConverter showConverter={showConverter} setShowConverter={setShowConverter} />
-
             <div className='mt-10'>
-              <div className='text-secondary font-semibold flex'>
-                <h1>Ingredient</h1>
-                <button type='button' className='ms-auto' onClick={() => setShowConverter(true)}>
-                  <PencilRuler className='w-6 h-6 text-secondary hover:text-blue-500' />
-                </button>
+              <div className='text-secondary font-semibold'>
+                Ingredient
               </div>
               <div>
                 <div className="grid grid-cols-7 gap-6 mt-5">
                   {/* Item Category */}
                   <div className="col-span-2">
-                    <label className="text-charcoal font-medium text-sm">
+                    <label className="block font-semibold mb-1">
                       Item Category <span className="text-primary font-extrabold text-base">*</span>
                     </label>
                     <select
-                      className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-accent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      className="w-full border border-gray-300 rounded p-2"
                       value={itemCategoryId}
                       onChange={(e) => setItemCategoryId(e.target.value)}
                     >
@@ -413,14 +394,13 @@ export default function MenuFormView() {
                       ))}
                     </select>
                   </div>
-
                   {/* Item Name */}
                   <div className="col-span-2">
-                    <label className="text-charcoal font-medium text-sm">
+                    <label className="block font-semibold mb-1">
                       Item Name <span className="text-primary font-extrabold text-base">*</span>
                     </label>
                     <select
-                      className="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-accent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      className="w-full border border-gray-300 rounded p-2"
                       value={itemData}
                       onChange={(e) => {
                         const [id, name, unit] = e.target.value.split(',');
@@ -441,19 +421,19 @@ export default function MenuFormView() {
                   </div>
                   {/* Unit of Measure */}
                   <div>
-                    <label className="text-charcoal font-medium text-sm">Unit</label>
-                    <div className="text-charcoal font-medium text-sm pt-2">
+                    <label className="block font-semibold mb-1">Unit</label>
+                    <div>
                       {itemData ? unitOnly : ''}
                     </div>
                   </div>
                   {/* Quantity */}
                   <div>
-                    <label className="text-charcoal font-medium text-sm">
+                    <label className="block font-semibold mb-1">
                       Quantity <span className="text-primary font-extrabold text-base">*</span>
                     </label>
                     <input
                       type="number"
-                      className="flex h-9 w-full rounded-md bg-accent px-3 py-1 file:rounded border text-sm transition-colors file:bg-transparent file:hover:bg-gray-300 file:h-full file:text-xs file:cursor-pointer placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-secondary disabled:cursor-not-allowed disabled:opacity-50 auto"
+                      className="w-full border border-gray-300 rounded p-2"
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="0"
@@ -463,46 +443,25 @@ export default function MenuFormView() {
                   <div>
                     <button
                       onClick={addIngredient}
-                      className="mt-7 text-secondary font-bold rounded hover:bg-secondary-dark"
+                      className="mt-6 bg-primary text-white font-bold py-2 px-4 rounded hover:bg-primary-dark"
                       type='button'
                     >
-                      <PlusCircleIcon className='w-7 h-7' />
+                      +
                     </button>
                   </div>
                 </div>
 
                 {/* Ingredients List */}
                 <div className="mt-5">
+                  <h2 className="font-semibold text-lg">Ingredients</h2>
                   {ingredients.length > 0 ? (
-                    <Table className='w-[500px]'>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead></TableHead>
-                          <TableHead>#</TableHead>
-                          <TableHead className="w-[50%]">Item Name</TableHead>
-                          <TableHead>Portion Amount</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {ingredients.map((ingredient, index) => (
-                          <TableRow key={index}>
-                            <TableCell className="w-10 text-center">
-                              <button
-                                type='button'
-                                onClick={() => removeItem(ingredient)}
-                                className="bg-red-500 hover:bg-red-600 transition-all rounded-full p-1 text-white"
-                              >
-                                <Cross2Icon className="h-3 w-3" />
-                              </button>
-                            </TableCell>
-                            <TableCell>{index + 1}</TableCell>
-                            <TableCell>{ingredient.item_name}</TableCell>
-                            <TableCell>{ingredient.quantity} {ingredient.unit_of_measure}</TableCell>
-                            <TableCell></TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                    <ul className="list-disc pl-5">
+                      {ingredients.map((ingredient, index) => (
+                        <li key={index}>
+                          {ingredient.item_name}  - {ingredient.quantity} {ingredient.unit_of_measure}
+                        </li>
+                      ))}
+                    </ul>
                   ) : (
                     <p>No ingredients added yet.</p>
                   )}

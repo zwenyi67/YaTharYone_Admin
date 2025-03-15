@@ -233,14 +233,14 @@ export default function EmployeeFormView() {
 
 
   return (
-    <section className="m-4">
+    <section className="m-">
       <FormHeader
-				title={t("title.employee-management")}
-				onRefresh={() => refetch()}
-				isLoading={isFetching || isRefetching}
-			/>
+        title={t("title.employee-management")}
+        onRefresh={() => refetch()}
+        isLoading={isFetching || isRefetching}
+      />
       <div className="p-6 bg-white rounded-lg">
-        <div className='flex mb-5'>
+        <div className='flex mb-8'>
           <div className='me-5'>
             <Link to={'/employee-management'}>
               <CircleChevronLeft className='w-8 h-8 text-secondary hover:text-blue-500' />
@@ -269,12 +269,15 @@ export default function EmployeeFormView() {
                 id="profilePhoto"
                 accept="image/png, image/jpeg, image/jpg"
                 onChange={handleImageChange}
-                className="hidden"  
+                className="hidden"
               />
               {fileError && <p className="text-red-500 text-sm">{fileError}</p>}
 
             </div>
-            <div className='grid grid-cols-2 gap-6 mt-5'>
+            <div className='text-secondary font-semibold flex mt-5'>
+              Detail Information
+            </div>
+            <div className='grid grid-cols-2 gap-6 mt-3'>
               {/* Employee Id */}
               <FormField
                 control={form.control}
@@ -318,51 +321,6 @@ export default function EmployeeFormView() {
                         onChange={field.onChange}
                         placeholder="Birth Date"
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Address */}
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Address" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Phone */}
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Phone Number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Email */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -438,7 +396,62 @@ export default function EmployeeFormView() {
                   </FormItem>
                 )}
               />
+            </div>
 
+            <div className='text-secondary font-semibold flex mt-5'>
+              Contact Information
+            </div>
+            <div className='grid grid-cols-2 gap-6 mt-3'>
+              {/* Phone */}
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Phone Number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* Address */}
+              <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                      <FormControl>
+                        <Input placeholder="Address" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className='text-secondary font-semibold flex mt-5'>
+              Account Information
+            </div>
+            <div className='grid grid-cols-2 gap-6 mt-3'>
               {/* Username */}
               <FormField
                 control={form.control}

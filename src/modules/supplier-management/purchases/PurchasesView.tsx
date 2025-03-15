@@ -12,8 +12,8 @@ const PurchasesView = () => {
 
   // Fetch data based on the selected tab
   const { data, isFetching, isRefetching, refetch } = api.purchaseItem.getPurchases.useQuery(tab, {
-    queryKey: ["getPurchases", tab], // Ensure queryKey is provided
-    enabled: true, // Always enabled for the default tab
+    queryKey: ["getPurchases", tab],
+    enabled: true,
   });
 
   const handleTabClick = (status:any) => {
@@ -35,7 +35,7 @@ const PurchasesView = () => {
               onClick={() => handleTabClick(status)}
               className={`px-4 py-2 rounded ${
                 tab === status
-                  ? "bg-blue-500 text-white"
+                  ? "bg-secondary text-white"
                   : "bg-gray-200 text-gray-700"
               }`}
             >

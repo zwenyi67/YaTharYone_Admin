@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button"
-import { Pencil2Icon } from "@radix-ui/react-icons"
-import { Link } from "react-router-dom"
-import { Info, Trash2Icon } from "lucide-react"
+import { Info } from "lucide-react"
 import { useState } from "react"
 import api from '@/api';
 import { toast } from "@/hooks/use-toast"
 import { useQueryClient } from "@tanstack/react-query"
-import { GetMenusType } from "@/api/menu/types"
+import { GetPaymentsType } from "@/api/order/types"
 
-const ManageColumn = ({ data }: { data: GetMenusType }) => {
+const ManageColumn = ({ data }: { data: GetPaymentsType }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isDetailOpen, setIsDetailOpen] = useState(false);
 	const queryClient = useQueryClient();
@@ -44,14 +42,6 @@ const ManageColumn = ({ data }: { data: GetMenusType }) => {
 			<Button variant={"columnIcon"} size={"icon"} onClick={() => setIsDetailOpen(true)}>
 				<Info color="blue" />
 			</Button>
-			<Button variant={"columnIcon"} size={"icon"}>
-				<Link to={`/menu-management/menus/${data.id}/edit`} state={{ data }}>
-					<Pencil2Icon color="green" />
-				</Link>
-			</Button>
-			<Button variant={"columnIcon"} size={"icon"} onClick={() => setIsDialogOpen(true)}>
-				<Trash2Icon color="red" />
-			</Button>
 			{/* Dialog Box */}
 			{isDialogOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -76,8 +66,8 @@ const ManageColumn = ({ data }: { data: GetMenusType }) => {
 
 			{/* Detail Dialog Box */}
 			{isDetailOpen && (
-				<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-100">
-					<div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md h-[550px] overflow-auto">
+				<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+					<div className="bg-white p-6 rounded-lg shadow-xl w-full sm:w-[60%] ">
 						<div className="flex items-center justify-between mb-4">
 							<h2 className="text-xl font-bold text-gray-800">
 								Menu Details
@@ -90,54 +80,33 @@ const ManageColumn = ({ data }: { data: GetMenusType }) => {
 							</button>
 						</div>
 						<div className="space-y-3 text-gray-700">
-							<div>
-								<img className="w-40 h-40" src={`http://127.0.0.1:8000${data.profile}`} alt="" />
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Menu :</span>
-								<span>{data.name}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Category :</span>
-								<span>{data.category.name}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Price :</span>
-								<span>{data.price}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Status :</span>
-								<span className="text-blue-600 underline">{data.status}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<span className="font-medium">Description :</span>
-								<span>{data.description}</span>
-							</div>
+							
 						</div>
 						<div className="w-full mt-8">
-							<div className="text-secondary font-semibold mb-3">
-								Ingredients
-							</div>
 							<table className="table-auto w-full border-collapse border border-gray-300 shadow-lg">
 								<thead className="bg-gray-200 text-gray-700">
 									<tr>
 										<th className="px-4 py-2 border border-gray-300">No</th>
-										<th className="px-4 py-2 border border-gray-300">Item Name</th>
+										<th className="px-4 py-2 border border-gray-300">Menu Name</th>
+										<th className="px-4 py-2 border border-gray-300">Price</th>
 										<th className="px-4 py-2 border border-gray-300">Quantity</th>
+										<th className="px-4 py-2 border border-gray-300">Sub Total</th>
 									</tr>
 								</thead>
-								<tbody className="text-gray-800">
-									{data.inventory_items.map((item, index) => (
+								{/* <tbody className="text-gray-800">
+									{data.order_details.map((item, index) => (
 										<tr key={item.id} className="hover:bg-gray-100">
 											<td className="px-4 py-2 text-center border border-gray-300">{index + 1}</td>
-											<td className="px-4 py-2 text-center border border-gray-300">{item.name}</td>
-											<td className="px-4 py-2 text-center border border-gray-300">{item.quantity} {item.unit_of_measure}</td>
+											<td className="px-4 py-2 text-center border border-gray-300">{item.menu.name}</td>
+											<td className="px-4 py-2 text-center border border-gray-300">${item.menu.price}</td>
+											<td className="px-4 py-2 text-center border border-gray-300">{item.quantity}</td>
+											<td className="px-4 py-2 text-center border border-gray-300">${(item.menu.price*item.quantity).toFixed(2)}</td>
 										</tr>
 									))}
-								</tbody>
+								</tbody> */}
 							</table>
-
 						</div>
+						
 						<div className="mt-6 flex justify-center space-x-4">
 							<Button
 								variant="secondary"

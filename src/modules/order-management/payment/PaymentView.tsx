@@ -5,15 +5,15 @@ import { columns } from "./columns"
 import FormHeader from "@/components/common/FormHeader"
 import { useState } from "react"
 
-const subTab = ["pending", "preparing", "ready", "served", "completed" ];
+const subTab = ["pending", "completed", "refunded" ];
 
-const OrderView = () => {
+const PaymentView = () => {
 
 	const [tab, setTab] = useState("pending");
 
 	// Fetch data based on the selected tab
-	const { data, isFetching, isRefetching, refetch } = api.order.getOrders.useQuery(tab, {
-		queryKey: ["getOrders", tab],
+	const { data, isFetching, isRefetching, refetch } = api.order.getPayments.useQuery(tab, {
+		queryKey: ["getPyaments", tab],
 		enabled: true,
 	  });
 
@@ -65,4 +65,4 @@ const OrderView = () => {
 	)
 }
 
-export default OrderView
+export default PaymentView

@@ -31,9 +31,29 @@ export interface Table {
   table_no: string;
 }
 
+export interface Order {
+  id: number;
+  order_number: string;
+}
+
 export interface Waiter {
   id: number;
   username: string;
+}
+
+export interface Cashier {
+  id: number;
+  username: string;
+}
+
+export interface GetPaymentsType extends TimeStamps {
+  id: number;
+  payment_number: string;
+  payment_method: number;
+  payment_status: string;
+  order: Order;
+  cashier: Cashier;
+  waiter: Waiter;
 }
 
 export interface PostResponse {

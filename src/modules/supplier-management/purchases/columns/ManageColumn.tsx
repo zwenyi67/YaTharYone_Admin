@@ -162,7 +162,7 @@ const ManageColumn = ({ data }: { data: GetPurchaseType }) => {
 								</thead>
 								<tbody className="text-gray-800">
 									{data.purchase_details.map((item, index) => (
-										<tr className="hover:bg-gray-100">
+										<tr className="hover:bg-gray-100" key={index}>
 											<td className="px-4 py-2 text-center border border-gray-300">{index + 1}</td>
 											<td className="px-4 py-2 text-center border border-gray-300">{item.item.name}</td>
 											<td className="px-4 py-2 text-center border border-gray-300">{item.quantity} {item.item.unit_of_measure}</td>

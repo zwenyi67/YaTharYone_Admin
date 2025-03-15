@@ -36,6 +36,9 @@ import InventoryFormView from "@/modules/inventory-management/inventory/Inventor
 import ItemCategoryFormView from "@/modules/inventory-management/item-category/ItemCategoryFormView";
 import ItemCategoryView from "@/modules/inventory-management/item-category/ItemCategoryView";
 import OrderView from "@/modules/order-management/order/OrderView";
+import WasteControlView from "@/modules/inventory-management/waste-control/WasteControlView";
+import WasteControlFormView from "@/modules/inventory-management/waste-control/WasteControlFormView";
+import PaymentView from "@/modules/order-management/payment/PaymentView";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -113,6 +116,19 @@ const router = createBrowserRouter([
       {
         path: "inventory-management/inventories/:id/edit",
         element: <InventoryFormView />,
+      },
+      // Waste Control
+      {
+        path: "inventory-management/waste-control",
+        element: <WasteControlView />,
+      },
+      {
+        path: "inventory-management/waste-control/create",
+        element: <WasteControlFormView />,
+      },
+      {
+        path: "inventory-management/waste-control/:id/edit",
+        element: <WasteControlFormView />,
       },
 
       // Inventory Management End
@@ -210,9 +226,16 @@ const router = createBrowserRouter([
       },
 
       //Order Managment
+
+      //Order
       {
         path: "/order-management/orders",
         element: <OrderView />,
+      },
+      //Payment
+      {
+        path: "/order-management/payments",
+        element: <PaymentView />,
       },
     ],
   },

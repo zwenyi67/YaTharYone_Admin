@@ -4,20 +4,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { Link, useParams } from 'react-router-dom';
-import { CircleChevronLeft } from 'lucide-react';
+import { CircleChevronLeft, PencilRuler } from 'lucide-react';
 import api from '@/api';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { GetItemCategoriesType } from '@/api/inventory/types';
 import { AddPurchaseItemPayloadType, ConfirmPurchaseItemsPayloadType, GetItemType } from '@/api/purchase-item/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { t } from "i18next"
 import { useDispatch } from 'react-redux';
 import { hideLoader, openLoader } from '@/store/features/loaderSlice';
-
+import UnitConverter from '@/components/common/UnitConverter';
 
 const formSchema = z.object({
   item_category_id: z.string().min(1, {
@@ -89,6 +89,8 @@ export default function PurchasesFormView() {
     name: "item_category_id", // Field to watch
   });
 
+  const purchase_note = useRef<string>();
+
   const unit = useWatch({
     control: form.control,
     name: "item_id"
@@ -99,6 +101,7 @@ export default function PurchasesFormView() {
 
   const [purchases, SetPurchases] = useState<AddPurchaseItemPayloadType[]>([]);
 
+  const [showConverter, setShowConverter] = useState<boolean>(false);
 
   const onSubmit = async (item: z.infer<typeof formSchema>) => {
     try {
@@ -176,13 +179,13 @@ export default function PurchasesFormView() {
     });
 
   const confirmPurchase = () => {
-    const payload = {
+    const payload: ConfirmPurchaseItemsPayloadType = {
       purchase_items: purchases,
-      supplier_id: supplier_id,
-      total_amount: 1000,
-      purchase_note: "Hello purchase",
+      supplier_id: Number(supplier_id),
+      total_amount: Number(purchases.reduce((total, purchase) => total + purchase.total_cost, 0).toFixed(2)),
+      purchase_note: purchase_note.current,
     }
-    requestPurchase(payload as ConfirmPurchaseItemsPayloadType);
+    requestPurchase(payload);
   }
 
   const cancelPurchase = () => {
@@ -204,12 +207,17 @@ export default function PurchasesFormView() {
           <div className='text-base font-semibold mt-1 text-secondary'>
             Purchsing Item List
           </div>
+          <div className='ms-auto'>
+            <button onClick={() => setShowConverter(true)}>
+              <PencilRuler className='w-6 h-6 text-secondary hover:text-blue-500' />
+            </button>
+          </div>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className='grid grid-cols-7 gap-6 mt-5'>
               {/*Item Category */}
-              <div className='col-span-2'>
+              <div className='col-span-3'>
                 <FormField
                   control={form.control}
                   name="item_category_id"
@@ -238,7 +246,7 @@ export default function PurchasesFormView() {
                 />
               </div>
               {/* Item Name */}
-              <div className='col-span-2'>
+              <div className='col-span-3'>
                 <FormField
                   control={form.control}
                   name="item_id"
@@ -271,8 +279,11 @@ export default function PurchasesFormView() {
                   <Input disabled placeholder={unitOnly} />
                 </div>
               </div>
+
+            </div>
+            <div className='grid grid-cols-7 gap-6 mt-5'>
               {/* Quantity */}
-              <div>
+              <div className='col-span-2'>
                 <FormField
                   control={form.control}
                   name="quantity"
@@ -289,13 +300,13 @@ export default function PurchasesFormView() {
                 />
               </div>
               {/* Total Cost */}
-              <div>
+              <div className='col-span-2'>
                 <FormField
                   control={form.control}
                   name="total_cost"
                   render={({ field }) => (
                     <FormItem >
-                      <FormLabel>Total Cost <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
+                      <FormLabel>Total Cost ($) <span className='text-primary font-extrabold text-base'>*</span></FormLabel>
                       <FormControl>
                         <Input type='number' placeholder='0' {...field}
                           onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))} />
@@ -305,69 +316,104 @@ export default function PurchasesFormView() {
                   )}
                 />
               </div>
+              {/* button */}
+              <div>
+                <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-5">
+                  Submit
+                </button>
+              </div>
             </div>
             <div>
-              <button type="submit" className="bg-secondary rounded-sm p-2 px-6 text-white mt-5">
-                Submit
-              </button>
             </div>
           </form>
         </Form>
 
-        <div className='flex justify-center mt-10 p-5'>
-          <Table>
+        <div className="flex justify-center mt-6 p-4">
+          <Table className="w-full">
             <TableHeader>
-              <TableRow>
-                <TableHead >
-                </TableHead>
-                <TableHead >No</TableHead>
-                <TableHead>Item Name</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Total Cost</TableHead>
+              <TableRow className="bg-gray-100 text-sm">
+                <TableHead className="w-10"></TableHead>
+                <TableHead className="w-10 text-center">#</TableHead>
+                <TableHead className="text-left">Item Name</TableHead>
+                <TableHead className="text-center">Qty</TableHead>
+                <TableHead className="text-right">Total ($)</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {purchases.length > 0 ? (
                 purchases.map((purchase, index) => (
-                    <TableRow key={purchase.item_id}>
-                      <TableCell><button onClick={() => removeItem(purchase)} className='bg-primary hover:bg-red-500 rounded-full p-1 text-white'><Cross2Icon className='h-3 w-3' /></button></TableCell>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{purchase.item_name}</TableCell>
-                      <TableCell>{purchase.quantity} {purchase.unit_of_measure}</TableCell>
-                      <TableCell>${purchase.total_cost}</TableCell>
-                    </TableRow>
+                  <TableRow key={purchase.item_id} className="text-sm border-b">
+                    <TableCell className="w-10 text-center">
+                      <button
+                        onClick={() => removeItem(purchase)}
+                        className="bg-red-500 hover:bg-red-600 transition-all rounded-full p-1 text-white"
+                      >
+                        <Cross2Icon className="h-3 w-3" />
+                      </button>
+                    </TableCell>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell>{purchase.item_name}</TableCell>
+                    <TableCell className="text-center">
+                      {purchase.quantity} {purchase.unit_of_measure}
+                    </TableCell>
+                    <TableCell className="text-right font-semibold">
+                      ${purchase.total_cost.toFixed(2)}
+                    </TableCell>
+                  </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center">
-                    No results.
+                  <TableCell colSpan={5} className="h-20 text-center text-gray-500">
+                    No items added.
                   </TableCell>
                 </TableRow>
               )}
 
               {purchases.length > 0 && (
                 <>
-                  <TableRow>
-                    <TableCell colSpan={4}>Total Amount</TableCell>
-                    <TableCell>
-                      ${purchases.reduce((total, purchase) => total + (purchase.total_cost), 0).toFixed(2)}
+                  <TableRow className="font-medium bg-gray-50">
+                    <TableCell colSpan={3} className="text-right pr-2">
+                      Total Amount:
+                    </TableCell>
+                    <TableCell colSpan={2} className="text-right font-bold">
+                      ${purchases.reduce((total, purchase) => total + purchase.total_cost, 0).toFixed(2)}
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <button onClick={cancelPurchase} className='bg-primary hover:bg-red-500 text-white p-2 px-4 rounded-sm'>Cancel</button>
+                  {/* Adding Notes */}
+                  <TableRow className="font-medium bg-gray-50">
+                    <TableCell colSpan={5} className="text-center pr-2">
+                      <input
+                        type="text"
+                        placeholder="Add note"
+                        className="w-full border rounded-md px-2 py-1"
+                        onChange={(e) => (purchase_note.current = e.target.value)} // Updating ref
+                      />
                     </TableCell>
-                    <TableCell>
-                      <button onClick={confirmPurchase} className='bg-secondary hover:bg-blue-500 text-white p-2 px-4 rounded-sm'>Confirm</button>
+                  </TableRow>
+                  <TableRow className="border-none">
+                    <TableCell colSpan={5} className="text-right space-x-2 pt-3">
+                      <button
+                        onClick={cancelPurchase}
+                        className="bg-red-500 hover:bg-red-600 text-white py-1 px-4 rounded transition-all text-sm"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={confirmPurchase}
+                        className="bg-secondary hover:bg-blue-800 text-white py-1 px-4 rounded transition-all text-sm"
+                      >
+                        Confirm
+                      </button>
                     </TableCell>
                   </TableRow>
                 </>
               )}
-
             </TableBody>
           </Table>
-
         </div>
+
+        <UnitConverter showConverter={showConverter} setShowConverter={setShowConverter} />
+
       </div>
     </section >
   )

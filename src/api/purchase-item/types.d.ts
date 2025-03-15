@@ -49,9 +49,9 @@ export interface AddPurchaseItemPayloadType {
 
 export interface ConfirmPurchaseItemsPayloadType {
   purchase_items: AddPurchaseItemPayloadType[];
-  supplier_id: number | string;
+  supplier_id: number;
   total_amount: number;
-  purchase_note: string;
+  purchase_note?: string;
 }
 
 export interface UpdateItemCategoryPayloadType {

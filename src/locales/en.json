@@ -27,13 +27,8 @@
     "details": "Details",
     "create": "Create",
     "update": "Update",
-    "job": "Job",
     "result": "Result",
-    "add-new": "Add New",
-    "basic-question-yes": "Yes",
-    "basic-question-no": "No",
-    "basic-score-pass": "Pass",
-    "basic-score-fail": "Fail"
+    "add-new": "Add New"
   },
   "title": {
     "dashboard": "Dashboard",
@@ -47,8 +42,10 @@
     "order-management": "Order Management",
     "inventory": "Inventory",
     "item-category": "Item Category",
+    "waste-control": "Waste Control",
     "menu": "Menu",
     "order": "Order",
+    "payment": "Payment",
     "menu-category": "Menu Categroy",
     "employee-management": "Employee Management",
     "table-management": "Table Management",
@@ -84,7 +81,11 @@
       "subTab": {
         "pending": "Pending",
         "completed": "Completed",
-        "cancelled": "Cancelled"
+        "cancelled": "Cancelled",
+        "preparing": "Preparing",
+        "ready": "Ready",
+        "served": "Served",
+        "refunded": "Refunded"
       }
     },
     "inventory-management": {
@@ -147,7 +148,18 @@
         "total_price": "Total Price",
         "status": "Status",
         "waiter": "Waiter",
-        "table": "Table No"
+        "table": "Table No",
+        "created_at": "Date"
+      },
+      "payment": {
+        "number": "No",
+        "payment_number": "Payment Number",
+        "payment_method": "Method",
+        "payment_status": "Status",
+        "order_number": "Order Number",
+        "waiter": "Waiter",
+        "cashier": "Cashier",
+        "created_at": "Date"
       }
     },
     "sd": {}
