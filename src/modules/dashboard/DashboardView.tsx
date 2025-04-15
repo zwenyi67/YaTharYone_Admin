@@ -92,7 +92,7 @@ const DashboardView = () => {
   const [tab, setTab] = useState("all");
 
   // Fetch data based on the selected tab
-  const { data, isFetching, isRefetching, refetch } = api.dashboard.getOverallStaticData.useQuery(tab, {
+  const { data } = api.dashboard.getOverallStaticData.useQuery(tab, {
     queryKey: ["getOrders", tab],
     enabled: true,
   });
@@ -219,7 +219,7 @@ const DashboardView = () => {
             <PieChart>
               <Pie data={orderTypeData} dataKey="value" cx="50%" cy="50%" outerRadius={80}>
                 {orderTypeData.map((entry, index) => (
-                  <Cell key={index} fill={["#f87171", "#60a5fa", "#34d399"][index % 3]} />
+                  <Cell key={`${entry}-${index}`} fill={["#f87171", "#60a5fa", "#34d399"][index % 3]} />
                 ))}
               </Pie>
               <Legend />
@@ -248,7 +248,7 @@ const DashboardView = () => {
             <PieChart>
               <Pie data={paymentMethodsData} dataKey="value" cx="50%" cy="50%" outerRadius={80}>
                 {paymentMethodsData.map((entry, index) => (
-                  <Cell key={index} fill={["#fbbf24", "#3b82f6", "#10b981"][index % 3]} />
+                  <Cell key={`${entry}-${index}`} fill={["#fbbf24", "#3b82f6", "#10b981"][index % 3]} />
                 ))}
               </Pie>
               <Legend />
