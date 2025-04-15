@@ -34,8 +34,8 @@ export const sidebarData = [
         icon: BoxIcon,
       },
       {
-        routeNames: ["/inventory-management/waste-control"],
-        name: "title.waste-control",
+        routeNames: ["/inventory-management/stock-adjustment"],
+        name: "title.stock-adjustment",
         icon: RecycleIcon,
       },
     ],

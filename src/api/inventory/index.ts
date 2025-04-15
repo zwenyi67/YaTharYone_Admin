@@ -7,14 +7,18 @@ import {
 import axios from "axios";
 import {
   AddInventoryPayloadType,
+  AddStockAdjustmentPayloadType,
   GetInventoriesType,
   GetItemCategoriesType,
+  GetStockAdjustmentsType,
   PostResponse,
   UpdateInventoryPayloadType,
+  UpdateStockAdjustmentPayloadType,
 } from "./types";
 
 const inventory_URL = "/admin/inventories";
 const itemCategory_URL = "/admin/item-categories";
+const stockAdjust_URL = "/admin/stock-adjust";
 
 export const getInventories = {
   useQuery: (opt?: UseQueryOptions<GetInventoriesType[], Error>) =>
@@ -167,6 +171,123 @@ export const changeStatus = {
       mutationFn: async (id: number) => {
         const response = await axios.post(
           `${inventory_URL}/${id}/changeStatus`
+        );
+
+        const { data, status, message } = response.data;
+
+        if (status !== 0) {
+          throw new Error(
+            message || "An error occurred while processing the request."
+          );
+        }
+
+        return data;
+      },
+      ...opt,
+    });
+  },
+};
+
+export const getStockAdjusts = {
+  useQuery: (opt?: UseQueryOptions<GetStockAdjustmentsType[], Error>) =>
+    useQuery<GetStockAdjustmentsType[], Error>({
+      queryKey: ["getStockAdjusts"],
+      queryFn: async () => {
+        const response = await axios.get(`${stockAdjust_URL}`);
+
+        const { data, status, message } = response.data;
+
+        if (status !== 0) {
+          throw new Error(message);
+        }
+
+        return data;
+      },
+      throwOnError: true,
+      ...opt,
+    }),
+};
+
+export const addStockAdjustment = {
+  useMutation: (
+    opt?: UseMutationOptions<
+      PostResponse,
+      Error,
+      AddStockAdjustmentPayloadType,
+      unknown
+    >
+  ) => {
+    return useMutation({
+      mutationKey: ["addStockAdjustment"],
+      mutationFn: async (payload: AddStockAdjustmentPayloadType) => {
+        const response = await axios.post(
+          `${stockAdjust_URL}/create`,
+          payload
+        )
+
+        const { data, status, message } = response.data
+
+        if (status !== 0) {
+          throw new Error(
+            message ||
+            "An error occurred while processing the request."
+          )
+        }
+
+        return data
+      },
+      ...opt,
+    })
+  },
+}
+
+export const updateStockAdjustment = {
+  useMutation: (
+    opt?: UseMutationOptions<
+      PostResponse,
+      Error,
+      UpdateStockAdjustmentPayloadType,
+      unknown
+    >
+  ) => {
+    return useMutation({
+      mutationKey: ["updateStockAdjustment"],
+      mutationFn: async (payload: UpdateStockAdjustmentPayloadType) => {
+        const response = await axios.post(
+          `${stockAdjust_URL}/edit`,
+          payload
+        )
+
+        const { data, status, message } = response.data
+
+        if (status !== 0) {
+          throw new Error(
+            message ||
+            "An error occurred while processing the request."
+          )
+        }
+
+        return data
+      },
+      ...opt,
+    })
+  },
+}
+
+export const deleteStockAdjustment = {
+  useMutation: (
+    opt?: UseMutationOptions<
+      PostResponse,
+      Error,
+      number,
+      unknown
+    >
+  ) => {
+    return useMutation({
+      mutationKey: ["deleteInventory"],
+      mutationFn: async (id: number) => {
+        const response = await axios.post(
+          `${inventory_URL}/${id}/delete`
         );
 
         const { data, status, message } = response.data;

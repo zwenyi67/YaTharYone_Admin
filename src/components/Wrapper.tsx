@@ -36,9 +36,9 @@ import InventoryFormView from "@/modules/inventory-management/inventory/Inventor
 import ItemCategoryFormView from "@/modules/inventory-management/item-category/ItemCategoryFormView";
 import ItemCategoryView from "@/modules/inventory-management/item-category/ItemCategoryView";
 import OrderView from "@/modules/order-management/order/OrderView";
-import WasteControlView from "@/modules/inventory-management/waste-control/WasteControlView";
-import WasteControlFormView from "@/modules/inventory-management/waste-control/WasteControlFormView";
 import PaymentView from "@/modules/order-management/payment/PaymentView";
+import StockAdjustmentView from "@/modules/inventory-management/waste-control/StockAdjustmentView";
+import StockAdjustmentFormView from "@/modules/inventory-management/waste-control/StockAdjustmentFormView";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -117,18 +117,18 @@ const router = createBrowserRouter([
         path: "inventory-management/inventories/:id/edit",
         element: <InventoryFormView />,
       },
-      // Waste Control
+      // Stock Adjustment
       {
-        path: "inventory-management/waste-control",
-        element: <WasteControlView />,
+        path: "inventory-management/stock-adjustment",
+        element: <StockAdjustmentView />,
       },
       {
-        path: "inventory-management/waste-control/create",
-        element: <WasteControlFormView />,
+        path: "inventory-management/stock-adjustment/create",
+        element: <StockAdjustmentFormView />,
       },
       {
-        path: "inventory-management/waste-control/:id/edit",
-        element: <WasteControlFormView />,
+        path: "inventory-management/stock-adjustment/:id/edit",
+        element: <StockAdjustmentFormView />,
       },
 
       // Inventory Management End

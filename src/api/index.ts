@@ -1,4 +1,5 @@
 import * as auth from "./auth";
+import * as dashboard from "./dashboard";
 import * as employee from "./employee";
 import * as supplier from "./supplier";
 import * as table from "./table";
@@ -11,6 +12,7 @@ import * as order from "./order";
 
 
 class API {
+  dashboard: typeof dashboard;
   auth: typeof auth;
   employee: typeof employee;
   supplier: typeof supplier;
@@ -23,6 +25,7 @@ class API {
   order: typeof order;
 
   constructor() {
+    this.dashboard = dashboard;
     this.auth = auth;
     this.employee = employee;
     this.supplier = supplier;

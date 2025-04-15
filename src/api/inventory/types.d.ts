@@ -1,4 +1,5 @@
 import { TimeStamps } from "@/shared/types";
+import { ItemType } from "../purchase-item/types";
 
 export interface GetInventoriesType extends TimeStamps {
   id: number;
@@ -56,6 +57,40 @@ export interface PostResponse {
   data: string
   status: number
   message: string
+}
+
+export interface GetStockAdjustmentsType extends TimeStamps {
+  id: number;
+  adjustment_type: string;
+  quantity: number;
+  reason: string;
+  adjustment_date: Date;
+  item: Item;
+}
+
+export interface Item {
+  id: number;
+  name: string;
+  unit_of_measure: string;
+}
+
+export interface AddStockAdjustmentPayloadType {
+  item_id: number | string;
+  quantity: number | any;
+  reason: string;
+  adjustment_date: Date;
+  adjustment_type: string;
+  createby?: number;
+}
+
+export interface UpdateStockAdjustmentPayloadType {
+  id: number;
+  item_id: number | string;
+  quantity: number | any;
+  reason: string;
+  adjustment_date: Date;
+  adjustment_type: string;
+  updateby?: number;
 }
 
 

@@ -4,14 +4,14 @@ import { t } from "i18next"
 import { columns } from "./columns"
 import FormHeader from "@/components/common/FormHeader"
 
-const WasteControlView = () => {
+const StockAdjustmentView = () => {
 
-	const { data, isFetching, refetch, isRefetching } = api.itemCategory.getItemCategories.useQuery()
+	const { data, isFetching, refetch, isRefetching } = api.inventory.getStockAdjusts.useQuery()
 
 	return (
 		<section className="m-4">
 			<FormHeader
-				title={t("title.waste-control")}
+				title={t("title.stock-adjustment")}
 				onRefresh={() => refetch()}
 				isLoading={isFetching || isRefetching}
 			/>
@@ -24,7 +24,7 @@ const WasteControlView = () => {
 					columnVisibility={{ created_at: false }}
 					filterColumns={["name"]}
 					sortColumn="created_at"
-					newCreate="/inventory-management/waste-control/create"
+					newCreate="/inventory-management/stock-adjustment/create"
 					excelExport={true}
 					exportedData={data}
 					fileName={'ItemCategoryData'}
@@ -37,4 +37,4 @@ const WasteControlView = () => {
 	)
 }
 
-export default WasteControlView
+export default StockAdjustmentView

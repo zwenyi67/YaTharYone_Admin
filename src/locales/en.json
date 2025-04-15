@@ -42,7 +42,7 @@
     "order-management": "Order Management",
     "inventory": "Inventory",
     "item-category": "Item Category",
-    "waste-control": "Waste Control",
+    "stock-adjustment": "Stock Adjustment",
     "menu": "Menu",
     "order": "Order",
     "payment": "Payment",
@@ -63,6 +63,13 @@
       "number": "Number"
     },
     "actions": "Actions",
+    "dashboard" : {
+      "subTab" : {
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
     "supplier-management": {
       "suppliers": {
         "number": "No",
@@ -105,6 +112,14 @@
         "number": "No",
         "name": "Item Name",
         "description": "Description"
+      },
+      "stock-adjust": {
+        "number": "No",
+        "name": "Item Name",
+        "reason": "Reason",
+        "adjustment_type": "Adjustment Type",
+        "adjustment_date": "Adjustment Date",
+        "quantity": "Quantity"
       }
     },
     "menu-management": {

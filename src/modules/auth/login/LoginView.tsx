@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const FormSchema = z.object({
@@ -48,7 +48,7 @@ const LoginView = () => {
     onSuccess: (data) => {
       console.log(data.token);
       userLogin(data.token);
-      
+
       const routeToRedirect = location.state?.from
         ? location.state.from.pathname
         : "/";
@@ -79,82 +79,72 @@ const LoginView = () => {
   }
 
   return (
-    <div className="">
-      <div className="absolute top-0 left-0 z-10 flex items-center justify-center flex-col w-full h-screen bg-transparent p-2">
-        <div className="w-[90vw] p-6 md:p-10 md:px-12 gap-1 flex flex-col items-center justify-center max-w-[480px] my-auto">
-          <div className="w-[200px] h-[80px] mb-4">
-          </div>
-
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="w-full space-y-6"
-            >
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Email"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Password"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex justify-right">
-                <NavLink to={"/"} className={"text-xs text-destructive"}>
-                  Forget Password?
-                </NavLink>
-              </div>
-              <Button
-                type="submit"
-                className="bg-black hover:bg-black active:bg-black w-full"
-                disabled={isLoading}
-              >
-                {isLoading ? "Logging in..." : "Login"}
-              </Button>
-            </form>
-          </Form>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-white">
+      <div className="bg-white rounded-2xl shadow-xl w-[90vw] max-w-md px-8 py-10 flex flex-col gap-6 items-center">
+        {/* Logo */}
+        <div className="flex items-center">
+          <img
+            src="/favicon.png"
+            alt="YaTharYone Logo"
+            className="mb-2"
+          />
+          <h1 className="text-2xl font-bold text-gray-800 tracking-wide ms-2 pb-1">YaTharYone</h1>
         </div>
-        {/* <p className="py-1 text-xs text-center">
-          Don't have an account?
-          <span className="hover:underline active:underline text-destructive font-medium cursor-pointer">
-            {" "}
-            Create New Account
-          </span>
-        </p> */}
-      </div>
+        <div className="text-gray-600 text-xl font-semibold">
+          Admin Panel
+        </div>
 
-      {/* <ul className="login-boxes z-0">
-				{blocks.map((b, i) => {
-					return <li key={i} style={b}></li>
-				})}
-			</ul> */}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="w-full space-y-6"
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Email"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              className="bg-secondary hover:bg-secondary active:bg-secondary w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : "Login"}
+            </Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 };

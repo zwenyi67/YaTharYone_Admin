@@ -3,7 +3,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { formatDate } from "date-fns";
 import ManageColumn from "./ManageColumn";
 import { GetInventoriesType } from "@/api/inventory/types";
-import StatusColumn from "./StatusColumn";
 import { CircleAlertIcon } from "lucide-react";
 
 // This type is used to define the shape of our data.
@@ -70,15 +69,15 @@ export const columns: ColumnDef<GetInventoriesType>[] = [
       return <div>{row.original.reorder_level} {row.original.unit_of_measure}</div>;
     },
   },
-  {
-    accessorKey: "status",
-    header: () => (
-      <TableHeaderCell className="text-center">{`${baseIndex}.status`}</TableHeaderCell>
-    ),
-    cell: (data) => {
-      return <StatusColumn data={data.row.original} />;
-    },
-  },
+  // {
+  //   accessorKey: "status",
+  //   header: () => (
+  //     <TableHeaderCell className="text-center">{`${baseIndex}.status`}</TableHeaderCell>
+  //   ),
+  //   cell: (data) => {
+  //     return <StatusColumn data={data.row.original} />;
+  //   },
+  // },
   {
     accessorKey: "created_at",
     header: () => <TableHeaderCell>{`${baseIndex}.created_at`}</TableHeaderCell>,
