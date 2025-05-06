@@ -25,7 +25,9 @@ const DefaultLayout = () => {
       <div className="hidden lg:block">
         <div className="lg:flex flex-col hidden min-h-svh bg-gray-100 h-full transition-all duration-300 lg:min-w-[280px] shadow-lg">
           <div className="flex flex-col items-center justify-center h-20">
-            <div className="">YaTharYone</div>
+            <div className="flex justify-center">
+              <img className="w-6 h-6 me-1" src="/favicon.png" alt="Icon" />
+              <span className="font-semibold text-gray-700">YaTharYone</span></div>
           </div>
           <Sidebar />
         </div>
